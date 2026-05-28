@@ -1,7 +1,18 @@
-import { createGrid } from '@core';
+import { createColumn, createGrid } from '@core';
 import { useLayoutEffect, useRef } from 'react';
 
-const grid = createGrid({});
+const grid = createGrid({
+  columnDefs: [
+    createColumn({
+      title: 'Name',
+      accessor: 'name',
+    }),
+    createColumn({
+      title: 'Age',
+      accessor: 'age',
+    }),
+  ],
+});
 
 export const Grid = () => {
   const ref = useRef<HTMLDivElement>(null);

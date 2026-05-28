@@ -14,7 +14,7 @@ export const createGrid = <TData = unknown>({
 
   const render: ZetaGridInstance['render'] = (element) => {
     ctx.root = element;
-    console.log(render, element);
+    console.log(ctx);
   };
 
   return {
