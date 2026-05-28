@@ -1,4 +1,5 @@
 import { createColumn, createGrid } from '@core';
+import { AutoSizer } from '@core/modules/autosizer';
 import { useLayoutEffect, useRef } from 'react';
 
 const grid = createGrid({
@@ -13,6 +14,8 @@ const grid = createGrid({
     }),
   ],
 });
+
+grid.use(AutoSizer);
 
 export const Grid = () => {
   const ref = useRef<HTMLDivElement>(null);

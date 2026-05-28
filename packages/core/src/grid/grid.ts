@@ -17,7 +17,13 @@ export const createGrid = <TData = unknown>({
     console.log(ctx);
   };
 
-  return {
+  const instance: ZetaGridInstance = {
     render,
+    use: (module) => {
+      ctx.modules.push(module);
+      return instance;
+    },
   };
+
+  return instance;
 };

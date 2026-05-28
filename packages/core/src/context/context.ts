@@ -6,6 +6,7 @@ export const createContext = <TData>(
   return {
     root: undefined,
     columnDefs: [],
+    modules: [],
     ...initial,
   };
 };
