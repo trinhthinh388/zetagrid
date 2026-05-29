@@ -13,4 +13,5 @@ export type ColumnDefinition<TData> = {
    * The resolved accessor to use when extracting data to render.
    */
   accessor: string | ColumnAccessorFn<TData>;
+  children?: ColumnDefinition<TData>;
 };

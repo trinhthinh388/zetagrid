@@ -8,11 +8,6 @@ export const createContext = <TData>(
     width: 500,
     modules: [],
     columnDefs: [],
-    root: undefined,
-    renderer: {
-      cellRenderer: () => null,
-      headerRenderer: () => null,
-    },
     ...initial,
   };
 };

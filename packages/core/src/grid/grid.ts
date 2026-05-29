@@ -1,37 +1,41 @@
-import { ColumnDefinition, ZetaGridContext, ZetaGridInstance } from '@models';
+import { ColumnDefinition, HeaderGroup, ZetaGridContext, ZetaGridInstance } from '@models';
 import { createContext } from '../context/context';
+import { generateId } from '../utils';
 
 export type CreateZetaGridParams<TData> = {
   columnDefs: ColumnDefinition<TData>[];
-} & Partial<Pick<ZetaGridContext<TData>, 'width' | 'height' | 'renderer'>>;
+} & Partial<Pick<ZetaGridContext<TData>, 'width' | 'height'>>;
 
 export const createGrid = <TData = unknown>({
   width,
   height,
-  renderer,
   columnDefs,
 }: CreateZetaGridParams<TData>): ZetaGridInstance => {
   const ctx = createContext({
     width,
     height,
-    renderer,
     columnDefs,
   });
 
-  const render: ZetaGridInstance['render'] = (element) => {
-    ctx.root = element;
-    const { columnDefs, renderer } = ctx;
-    if (!columnDefs.length) return { headers: [] };
+  const getHeaderGroups: ZetaGridInstance['getHeaderGroups'] = () => {
+    const { columnDefs } = ctx;
 
-    const headers = columnDefs.map((columnDef) => renderer.headerRenderer(columnDef));
+    const groups: HeaderGroup[] = [
+      {
+        id: generateId(),
+        getHeaders: () =>
+          columnDefs.map((def) => ({
+            id: def.id,
+            title: def.title,
+          })),
+      },
+    ];
 
-    return {
-      headers,
-    };
+    return groups;
   };
 
   const instance: ZetaGridInstance = {
-    render,
+    getHeaderGroups,
     use: (module) => {
       ctx.modules.push(module);
       return instance;

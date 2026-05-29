@@ -11,7 +11,7 @@
 
 let counter = 0;
 
-export function generateId(prefix = ':r'): string {
+export function generateId(prefix = 'zg-'): string {
   const id = counter++;
   const random = Math.random().toString(36).slice(2, 5);
   return `${prefix}${id.toString(36)}${random}:`;
