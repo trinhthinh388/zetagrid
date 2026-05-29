@@ -17,7 +17,8 @@
       "@core": ["./packages/core/src/index.ts"],
       "@core/modules/*": ["./packages/core/src/modules/*"],
       "@models": ["./packages/models/src/index.ts"],
-      "@react": ["./packages/react/src/index.ts"]
+      "@react": ["./packages/react/src/index.ts"],
+      "@styles": ["./packages/styles/*"]
     }
   }
 }

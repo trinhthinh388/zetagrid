@@ -1,39 +1,29 @@
-import { createGrid, createColumn } from '@core';
-import { useLayoutEffect, useRef } from 'react';
-import { createRoot } from 'react-dom/client';
+import { contructElementAttributes, createColumn } from '@core';
+import '@zetagrid/styles';
+import { useRef } from 'react';
+import { GridHeader } from '../header';
+import { useGrid } from '../hooks/use-grid';
 
 export const Grid = () => {
   const ref = useRef<HTMLDivElement>(null);
+  const grid = useGrid({
+    columnDefs: [
+      createColumn({
+        id: 'name',
+        title: 'Name',
+        accessor: 'name',
+      }),
+      createColumn({
+        id: 'age',
+        title: 'Age',
+        accessor: 'age',
+      }),
+    ],
+  });
 
-  useLayoutEffect(() => {
-    if (!ref.current) return;
-
-    const grid = createGrid({
-      columnDefs: [
-        createColumn({
-          id: 'name',
-          title: 'Name',
-          accessor: 'name',
-        }),
-        createColumn({
-          id: 'age',
-          title: 'Age',
-          accessor: 'age',
-        }),
-      ],
-      renderer: {
-        cellRenderer: () => <div>HIHI</div>,
-        headerRenderer: ({ id }) => (
-          <div data-slot="header" key={id} data-row-id={id}>
-            HIHI
-          </div>
-        ),
-      },
-    });
-    const { headers } = grid.render(ref.current);
-    const root = createRoot(ref.current);
-    root.render(<div>{headers}</div>);
-  }, []);
-
-  return <div ref={ref} data-slot="zeta-grid-root" />;
+  return (
+    <div ref={ref} {...contructElementAttributes.root()}>
+      <GridHeader />
+    </div>
+  );
 };

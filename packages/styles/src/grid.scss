@@ -1,0 +1,10 @@
+@use './variables' as *;
+
+.zeta-grid {
+  &__root {
+    display: flex;
+    border: 1px solid $border;
+    border-radius: $radius;
+    background-color: $background;
+  }
+}
