@@ -1,10 +1,11 @@
 import { IGridModule } from './module';
+import { GridRenderResult } from './renderer';
 
 export type ZetaGridInstance = {
   /**
    * Render ZetaGrid to the provided root element.
    */
-  render: (element: HTMLElement) => void;
+  render: (element: HTMLElement) => GridRenderResult;
   /**
    * Register ZetaGrid's modules to extends the functionality.
    */

@@ -5,11 +5,5 @@
   "projectType": "application",
   "tags": [],
   "// targets": "to see all targets run: nx show project playground --web",
-  "targets": {
-    "dev": {
-      "cache": false,
-      "continuous": true,
-      "command": "storybook dev"
-    }
-  }
+  "targets": {}
 }

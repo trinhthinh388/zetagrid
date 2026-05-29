@@ -4,7 +4,7 @@ export type ColumnDefinition<TData> = {
   /**
    * The resolved unique identifier for the column.
    */
-  id?: string;
+  id: string;
   /**
    * Title of the column.
    */
