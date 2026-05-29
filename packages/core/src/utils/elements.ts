@@ -34,4 +34,10 @@ export const contructElementAttributes = {
       'data-slot': 'header-cell',
       role: 'presentation',
     }) satisfies ZetaElementAttributes,
+  headerTitle: () =>
+    ({
+      className: 'zeta-grid__header-title',
+      'data-slot': 'header-title',
+      role: 'presentation',
+    }) satisfies ZetaElementAttributes,
 } as const;

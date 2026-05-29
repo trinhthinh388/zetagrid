@@ -13,7 +13,7 @@ export const GridHeader = (props: GridHeaderProps) => {
         <div key={headerGroup.id} {...contructElementAttributes.headerRow({ id: headerGroup.id })}>
           {headerGroup.getHeaders().map((header) => (
             <div key={header.id} {...contructElementAttributes.headerCell({ id: header.id })}>
-              {header.title}
+              <div {...contructElementAttributes.headerTitle()}>{header.title}</div>
             </div>
           ))}
         </div>
