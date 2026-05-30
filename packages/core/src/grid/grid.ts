@@ -31,6 +31,18 @@ export const createGrid = <TData = unknown>({
       bodyHeight: 0,
       bodyWidth: 0,
     },
+    scrollState: {
+      thumb: {
+        horizontal: {
+          size: 0,
+          offset: 0,
+        },
+        vertical: {
+          size: 0,
+          offset: 0,
+        },
+      },
+    },
     root: ref<ZetaGridState['root']>({ element: null }),
   });
 

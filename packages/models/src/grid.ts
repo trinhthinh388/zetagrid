@@ -31,8 +31,22 @@ export type ZetaGridRect = {
   bodyHeight: number;
 };
 
+export type ZetaGridSrollState = {
+  thumb: {
+    horizontal: {
+      size: number;
+      offset: number;
+    };
+    vertical: {
+      size: number;
+      offset: number;
+    };
+  };
+};
+
 export type ZetaGridState<TData = unknown> = {
   rect: ZetaGridRect;
+  scrollState: ZetaGridSrollState;
   /**
    * Flag to check if the grid is ready to render.
    */

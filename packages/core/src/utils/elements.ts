@@ -77,6 +77,7 @@ const bodyConstructors = {
       style: {
         height: grid.state.rect.bodyHeight,
         width: grid.state.rect.containerWidth,
+        minHeight: grid.state.rect.containerHeight - grid.state.rect.headerHeight,
       },
     }) satisfies ZetaElementAttributes,
   bodyContainer: (grid: ZetaGridInstance) =>
@@ -91,8 +92,29 @@ const bodyConstructors = {
     }) satisfies ZetaElementAttributes,
 } as const;
 
-export const contructElementAttributes = {
+const scrollbarConstructors = {
+  scrollbarTrack: (grid: ZetaGridInstance, orientation: 'horizontal' | 'vertical') =>
+    ({
+      className: `zeta-grid__scrollbar-track zeta-grid__scrollbar-track--${orientation}`,
+      'aria-orientation': orientation,
+      'data-slot': 'scrollbar-track',
+      role: 'scrollbar',
+    }) satisfies ZetaElementAttributes,
+  scrollbarThumb: (grid: ZetaGridInstance, orientation: 'horizontal' | 'vertical') =>
+    ({
+      className: 'zeta-grid__scrollbar-thumb',
+      'data-slot': 'scrollbar-thumb',
+      role: 'presentation',
+      style: {
+        [orientation === 'horizontal' ? 'width' : 'height']:
+          grid.state.scrollState.thumb[orientation].size,
+      },
+    }) satisfies ZetaElementAttributes,
+} as const;
+
+export const constructElementAttributes = {
   ...gridConstructors,
   ...bodyConstructors,
   ...headerConstructors,
+  ...scrollbarConstructors,
 } as const;

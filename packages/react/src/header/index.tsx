@@ -1,4 +1,4 @@
-import { contructElementAttributes } from '@core';
+import { constructElementAttributes } from '@core';
 import { Header } from '@models';
 import { PropsWithChildren, useCallback } from 'react';
 import { useGrid } from '../hooks/use-grid';
@@ -11,11 +11,11 @@ export const GridHeader = (props: GridHeaderProps) => {
   const render = useCallback((header: Header) => {
     if (header.isGroup) {
       return (
-        <div key={header.id} {...contructElementAttributes.headerGroup(header)}>
-          <div key={header.id} {...contructElementAttributes.headerCell(header)}>
-            <div {...contructElementAttributes.headerTitle()}>{header.title}</div>
+        <div key={header.id} {...constructElementAttributes.headerGroup(header)}>
+          <div key={header.id} {...constructElementAttributes.headerCell(header)}>
+            <div {...constructElementAttributes.headerTitle()}>{header.title}</div>
           </div>
-          <div {...contructElementAttributes.headerGroupContainer()}>
+          <div {...constructElementAttributes.headerGroupContainer()}>
             {header.children.map(render)}
           </div>
         </div>
@@ -23,15 +23,15 @@ export const GridHeader = (props: GridHeaderProps) => {
     }
 
     return (
-      <div key={header.id} {...contructElementAttributes.headerCell(header)}>
-        <div {...contructElementAttributes.headerTitle()}>{header.title}</div>
+      <div key={header.id} {...constructElementAttributes.headerCell(header)}>
+        <div {...constructElementAttributes.headerTitle()}>{header.title}</div>
       </div>
     );
   }, []);
 
   return (
-    <div {...props} {...contructElementAttributes.header(grid)}>
-      <div {...contructElementAttributes.headerContainer(grid)}>
+    <div {...props} {...constructElementAttributes.header(grid)}>
+      <div {...constructElementAttributes.headerContainer(grid)}>
         {grid.getHeaders().map(render)}
       </div>
     </div>

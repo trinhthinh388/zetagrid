@@ -1,4 +1,4 @@
-import { contructElementAttributes, CreateZetaGridParams } from '@core';
+import { constructElementAttributes, CreateZetaGridParams } from '@core';
 import '@zetagrid/styles';
 import { useState } from 'react';
 import { GridBody } from '../body';
@@ -15,7 +15,7 @@ const InnerGrid = () => {
   if (!isReady) return null;
 
   return (
-    <div {...contructElementAttributes.container(grid)}>
+    <div {...constructElementAttributes.container(grid)}>
       <GridHeader />
       <GridBody />
     </div>
@@ -26,7 +26,7 @@ export const Grid = <TData,>(props: CreateZetaGridParams<TData>) => {
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
   return (
     <GridProvider {...props} root={root}>
-      <div ref={setRoot} {...contructElementAttributes.root()}>
+      <div ref={setRoot} {...constructElementAttributes.root()}>
         <InnerGrid />
       </div>
     </GridProvider>

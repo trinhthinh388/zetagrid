@@ -2,12 +2,13 @@
 
 .zeta-grid {
   &__root {
-    box-sizing: content-box;
+    box-sizing: border-box;
     border: $border-width-1 solid $border;
     border-radius: $radius;
     background-color: $background;
     width: 100%;
     height: 100%;
+    overflow: hidden;
   }
 
   &__container {
@@ -49,8 +50,54 @@
     font-size: $grid-header-cell-font-size;
     font-family: $grid-header-cell-font-family;
   }
+
+  &__body {
+    position: relative;
+  }
+
+  &__scrollbar-track {
+    position: absolute;
+
+    &--vertical {
+      top: 0;
+      right: 0;
+      // border-inline-start: $border-width-1 solid $border;
+      background-color: $scrollbar-background;
+      width: $spacing-3;
+      height: 100%;
+
+      .zeta-grid__scrollbar-thumb {
+        width: 100%;
+        height: 100px;
+      }
+    }
+
+    &--horizontal {
+      bottom: 0;
+      left: 0;
+      // border-block-start: $border-width-1 solid $border;
+      background-color: $scrollbar-background;
+      width: 100%;
+      height: $spacing-3;
+
+      .zeta-grid__scrollbar-thumb {
+        width: 100px;
+        height: 100%;
+      }
+    }
+  }
+
+  &__scrollbar-thumb {
+    position: absolute;
+    border-radius: $radius;
+    background-color: $scrollbar-thumb-background;
+
+    &:hover {
+      background-color: $scrollbar-thumb-background-hover;
+    }
+  }
 }
 
 .zeta-grid-no-scrollbar {
-  // scrollbar-width: none;
+  scrollbar-width: none;
 }

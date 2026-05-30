@@ -77,4 +77,9 @@
   --grid-header-cell-font-family: var(--grid-font-family);
   --grid-header-cell-font-size: 0.875rem;
   --grid-header-cell-font-weight: 500;
+
+  // Scrollbar
+  --scrollbar-background: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --scrollbar-thumb-background: color-mix(in oklab, var(--foreground) 50%, transparent);
+  --scrollbar-thumb-background-hover: color-mix(in oklab, var(--foreground) 65%, transparent);
 }
