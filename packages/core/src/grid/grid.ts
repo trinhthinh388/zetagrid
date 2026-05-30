@@ -16,7 +16,7 @@ const DEFAULT_HEADER_ROW_HEIGHT = 40;
 
 export type CreateZetaGridParams<TData> = {
   columnDefs: ColumnDefinition<TData>[];
-  modules?: IGridModule[];
+  modules?: IGridModule<TData>[];
 } & Partial<Pick<ZetaGridContext<TData>, 'width' | 'height'>>;
 
 export const createGrid = <TData = unknown>({
@@ -24,17 +24,17 @@ export const createGrid = <TData = unknown>({
   height,
   columnDefs,
   modules = [],
-}: CreateZetaGridParams<TData>): ZetaGridInstance => {
+}: CreateZetaGridParams<TData>): ZetaGridInstance<TData> => {
   let totalHeaderHeight = 0;
 
-  const ctx = createContext({
+  const ctx = createContext<TData>({
     width,
     height,
+    modules,
     columnDefs,
-    modules: [],
   });
 
-  const getHeaderGroups: ZetaGridInstance['getHeaderGroups'] = () => {
+  const getHeaderGroups: ZetaGridInstance<TData>['getHeaderGroups'] = () => {
     const { columnDefs } = ctx;
 
     const maxDepth = getMaxColumnsDepth<TData>(columnDefs);
@@ -116,17 +116,17 @@ export const createGrid = <TData = unknown>({
     return groups;
   };
 
-  const getTotalHeaderHeight: ZetaGridInstance['getTotalHeaderHeight'] = () => totalHeaderHeight;
+  const getTotalHeaderHeight: ZetaGridInstance<TData>['getTotalHeaderHeight'] = () =>
+    totalHeaderHeight;
 
-  const applyElementAttributes: ZetaGridInstance['applyElementAttributes'] = (
+  const applyElementAttributes: ZetaGridInstance<TData>['applyElementAttributes'] = (
     slot,
     attributes,
-    context,
   ) => {
     let result: ZetaElementAttributes = { ...attributes };
     for (const module of ctx.modules) {
       if (module.modifyElementAttributes) {
-        result = module.modifyElementAttributes({ slot, context, attributes });
+        result = module.modifyElementAttributes({ slot, context: ctx, attributes });
       }
     }
     return result;
@@ -148,7 +148,7 @@ export const createGrid = <TData = unknown>({
     }
   };
 
-  const instance: ZetaGridInstance = {
+  const instance: ZetaGridInstance<TData> = {
     init,
     destroy,
     getHeaderGroups,

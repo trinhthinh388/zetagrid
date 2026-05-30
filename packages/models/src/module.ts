@@ -1,3 +1,4 @@
+import { ZetaGridContext } from './context';
 import { ZetaGridInstance } from './grid';
 
 export type ZetaElementAttributes = {
@@ -8,14 +9,14 @@ export type ZetaElementAttributes = {
   style?: Record<string, string | number>;
 };
 
-export interface IGridModule<TContext = unknown> {
+export interface IGridModule<TData = unknown> {
   _name: string;
-  init?: (grid: ZetaGridInstance) => void;
-  destroy?: (grid: ZetaGridInstance) => void;
-  register?: (grid: ZetaGridInstance) => void;
+  init?: (grid: ZetaGridInstance<TData>) => void;
+  destroy?: (grid: ZetaGridInstance<TData>) => void;
+  register?: (grid: ZetaGridInstance<TData>) => void;
   modifyElementAttributes?: (params: {
     slot: string;
-    context?: TContext;
+    context: ZetaGridContext<TData>;
     attributes: ZetaElementAttributes;
   }) => ZetaElementAttributes;
 }

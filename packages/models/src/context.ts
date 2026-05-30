@@ -3,7 +3,7 @@ import { IGridModule } from './module';
 
 export type ZetaGridContext<TData> = {
   columnDefs: ColumnDefinition<TData>[];
-  modules: IGridModule[];
+  modules: IGridModule<TData>[];
   /**
    * Grid's width - in `px`
    * @default 500

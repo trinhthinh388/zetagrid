@@ -1,11 +1,11 @@
 import { HeaderGroup } from './header';
 import { IGridModule, ZetaElementAttributes } from './module';
 
-export type ZetaGridInstance<TContext = unknown> = {
+export type ZetaGridInstance<TData = unknown> = {
   /**
    * Register ZetaGrid's modules to extends the functionality.
    */
-  use: (...modules: IGridModule[]) => ZetaGridInstance<TContext>;
+  use: (...modules: IGridModule<TData>[]) => ZetaGridInstance<TData>;
   /**
    * Initialize all registered modules.
    */
@@ -36,7 +36,6 @@ export type ZetaGridInstance<TContext = unknown> = {
   applyElementAttributes: (
     slot: string,
     attributes: ZetaElementAttributes,
-    context?: TContext,
   ) => ZetaElementAttributes;
 };
 
