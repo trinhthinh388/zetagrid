@@ -7,9 +7,9 @@ export const VirtualizedModule = {
   _name: 'virtualized',
   init: (grid: ZetaGridInstance) => {
     logger.info('VirtualizedModule initialized');
-    if (!grid.context.root) return;
-    const { width, height } = grid.context.root.getBoundingClientRect();
-    grid.context.width = width;
-    grid.context.height = height;
+    if (!grid.state.root || !grid.state.root.element) return;
+    const { width, height } = grid.state.root.element.getBoundingClientRect();
+    grid.state.width = width;
+    grid.state.height = height;
   },
 };

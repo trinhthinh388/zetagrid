@@ -3,38 +3,38 @@ import {
   Header,
   HeaderGroup,
   IGridModule,
-  ZetaGridContext,
   ZetaGridInstance,
+  ZetaGridState,
 } from '@models';
+import { proxy, ref } from 'valtio';
+import { DEFAULT_GRID_SIZE, DEFAULT_HEADER_ROW_HEIGHT } from '../constants';
 import { createContext } from '../context/context';
 import { createLifeCyclePipe, createLogger, idGenerator } from '../utils';
 import { buildColumnsPaths } from '../utils/build-column-paths';
 import { getMaxColumnsDepth } from '../utils/get-max-columns-depth';
 
-const DEFAULT_HEADER_ROW_HEIGHT = 40;
-
 export type CreateZetaGridParams<TData> = {
   columnDefs: ColumnDefinition<TData>[];
   modules?: IGridModule<TData>[];
-} & Partial<Pick<ZetaGridContext<TData>, 'width' | 'height' | 'root'>>;
+};
 
 export const createGrid = <TData = unknown>({
-  root,
-  width,
-  height,
   columnDefs,
   modules = [],
 }: CreateZetaGridParams<TData>): ZetaGridInstance<TData> => {
-  let isReady = false;
   let totalHeaderHeight = 0;
 
   const logger = createLogger('Grid');
   const pipes = createLifeCyclePipe<TData>();
   const ctx = createContext<TData>({
-    root,
-    width,
-    height,
     columnDefs,
+  });
+
+  const state = proxy<ZetaGridState<TData>>({
+    isReady: false,
+    root: ref<ZetaGridState['root']>({ element: null }),
+    width: DEFAULT_GRID_SIZE,
+    height: DEFAULT_GRID_SIZE,
   });
 
   const use: ZetaGridInstance<TData>['use'] = (...modules) => {
@@ -131,17 +131,19 @@ export const createGrid = <TData = unknown>({
     return groups;
   };
 
-  const setContext: ZetaGridInstance<TData>['setContext'] = (partials) => {
-    Object.assign(ctx, partials);
+  const setState: ZetaGridInstance<TData>['setState'] = (key, value) => {
+    state[key] = value;
   };
 
   const getTotalHeaderHeight: ZetaGridInstance<TData>['getTotalHeaderHeight'] = () =>
     totalHeaderHeight;
 
-  const init = () => {
-    logger.info('Running Init pipes');
+  const init: ZetaGridInstance<TData>['init'] = (root) => {
+    if (root) state.root.element = root;
+    logger.info('Init pipes - Starting');
     pipes.run('init', instance);
-    isReady = true;
+    logger.info('Init pipes - Successfully');
+    setState('isReady', true);
   };
 
   const unmount = () => {
@@ -152,9 +154,9 @@ export const createGrid = <TData = unknown>({
   const instance: ZetaGridInstance<TData> = {
     use,
     init,
+    state,
     unmount,
-    isReady,
-    setContext,
+    setState,
     context: ctx,
     getHeaderGroups,
     getTotalHeaderHeight,

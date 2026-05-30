@@ -9,7 +9,9 @@ export type GridProps<TData> = CreateZetaGridParams<TData>;
 const InnerGrid = () => {
   const grid = useGrid();
 
-  if (!grid.isReady) return null;
+  const isReady = grid.state.isReady;
+
+  if (!isReady) return null;
 
   return (
     <div {...contructElementAttributes.wrapper(grid)}>
@@ -19,7 +21,7 @@ const InnerGrid = () => {
 };
 
 export const Grid = <TData,>(props: CreateZetaGridParams<TData>) => {
-  const [root, setRoot] = useState<HTMLElement | null>(null);
+  const [root, setRoot] = useState<HTMLDivElement | null>(null);
   return (
     <GridProvider {...props} root={root}>
       <div ref={setRoot} {...contructElementAttributes.root()}>

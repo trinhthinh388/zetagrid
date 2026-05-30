@@ -12,7 +12,7 @@ export const contructElementAttributes = {
       className: 'zeta-grid__wrapper',
       'data-slot': 'zeta-grid-wrapper',
       role: 'grid',
-      style: { width: grid.context.width, height: grid.context.height },
+      style: { width: grid.state.width, height: grid.state.height },
     }) satisfies ZetaElementAttributes,
   header: (totalHeight: number) =>
     ({

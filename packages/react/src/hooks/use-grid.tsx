@@ -1,27 +1,34 @@
 import { createGrid, type CreateZetaGridParams } from '@core';
-import { ZetaGridInstance } from '@models';
+import { ZetaGridInstance, ZetaGridState } from '@models';
 import { createContext, PropsWithChildren, useContext, useLayoutEffect, useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const GridContext = createContext<ZetaGridInstance<any> | undefined>(undefined);
 
-export type GridProviderProps<TData> = PropsWithChildren<CreateZetaGridParams<TData>>;
+export type GridProviderProps<TData> = PropsWithChildren<CreateZetaGridParams<TData>> & {
+  root: HTMLElement | null;
+};
 
 export const GridProvider = <TData,>({ children, root, ...params }: GridProviderProps<TData>) => {
   const [grid] = useState(() => createGrid<TData>(params));
+  const state = useSnapshot(grid.state);
 
   useLayoutEffect(() => {
     if (!root) return;
-    grid.setContext({ root });
-    grid.init();
+    grid.init(root);
     return () => grid.unmount();
   }, [grid, root]);
 
-  return <GridContext.Provider value={grid}>{children}</GridContext.Provider>;
+  return (
+    <GridContext.Provider value={{ ...grid, state: state as ZetaGridState<TData> }}>
+      {children}
+    </GridContext.Provider>
+  );
 };
 
-export const useGrid = () => {
-  const grid = useContext(GridContext);
+export const useGrid = <TData = unknown,>() => {
+  const grid = useContext(GridContext) as ZetaGridInstance<TData>;
 
   if (!grid) {
     throw new Error('useGrid must be used within GridProvider');

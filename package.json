@@ -58,6 +58,7 @@
     "@fontsource-variable/geist": "^5.2.9",
     "@zetagrid/styles": "workspace:*",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "valtio": "^2.3.2"
   }
 }
