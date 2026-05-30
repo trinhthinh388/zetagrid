@@ -7,7 +7,7 @@ import {
   ZetaGridInstance,
 } from '@models';
 import { createContext } from '../context/context';
-import { createLifeCyclePipe, idGenerator } from '../utils';
+import { createLifeCyclePipe, createLogger, idGenerator } from '../utils';
 import { buildColumnsPaths } from '../utils/build-column-paths';
 import { getMaxColumnsDepth } from '../utils/get-max-columns-depth';
 
@@ -27,8 +27,8 @@ export const createGrid = <TData = unknown>({
   const isReady = true;
   let totalHeaderHeight = 0;
 
+  const logger = createLogger('Grid');
   const pipes = createLifeCyclePipe<TData>();
-
   const ctx = createContext<TData>({
     width,
     height,
@@ -133,10 +133,12 @@ export const createGrid = <TData = unknown>({
     totalHeaderHeight;
 
   const init = () => {
+    logger.info('Running Init pipes');
     pipes.run('init', instance);
   };
 
   const unmount = () => {
+    logger.info('Running Unmount pipes');
     pipes.run('unmount', instance);
   };
 
@@ -150,9 +152,7 @@ export const createGrid = <TData = unknown>({
     getTotalHeaderHeight,
   };
 
-  if (modules && modules.length > 0) {
-    instance.use(...modules);
-  }
+  instance.use(...modules);
 
   return instance;
 };

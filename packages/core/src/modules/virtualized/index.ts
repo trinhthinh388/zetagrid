@@ -1,5 +1,11 @@
-import { IGridModule } from '@models';
+import { ZetaGridInstance } from '@models';
+import { createLogger } from '../../utils';
 
-export class VirtualizedModule<TContext> implements IGridModule<TContext> {
-  static _name = 'virtualized';
-}
+const logger = createLogger('VirtualizedModule');
+
+export const VirtualizedModule = {
+  _name: 'virtualized',
+  init: (grid: ZetaGridInstance) => {
+    logger.info('VirtualizedModule initialized');
+  },
+};

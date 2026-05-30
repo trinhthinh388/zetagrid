@@ -1,5 +1,6 @@
 import { ColumnDefinition } from './column';
 import { IGridModule } from './module';
+import { Logger } from './logger';
 
 export type ZetaGridContext<TData> = {
   columnDefs: ColumnDefinition<TData>[];
@@ -14,4 +15,6 @@ export type ZetaGridContext<TData> = {
    * @default 500
    */
   height: number;
+  debug?: boolean;
+  logger?: Logger;
 };
