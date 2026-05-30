@@ -6,28 +6,30 @@
     border: $border-width-1 solid $border;
     border-radius: $radius;
     background-color: $background;
+    width: fit-content;
+    height: fit-content;
+  }
+
+  &__wrapper {
+    overflow: auto;
   }
 
   &__header {
-    display: grid;
+    position: relative;
     border-bottom: $border-width-1 solid $border;
     border-top-right-radius: inherit;
     border-top-left-radius: inherit;
     width: 100%;
   }
 
-  &__header-row {
-    display: contents;
-  }
-
   &__header-cell {
     display: flex;
+    position: absolute;
     align-items: center;
+    box-sizing: border-box;
     border-bottom: $border-width-1 solid $border;
     background-color: $grid-header-cell-background;
     padding-inline: $spacing-2;
-    height: 100%;
-    min-height: $spacing-10;
   }
 
   &__header-title {

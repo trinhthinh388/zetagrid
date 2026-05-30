@@ -14,4 +14,9 @@ export type ColumnDefinition<TData> = {
    */
   accessor: string | ColumnAccessorFn<TData>;
   children?: ColumnDefinition<TData>[];
+  /**
+   * Width of the column
+   * @default 200
+   */
+  width: number;
 };

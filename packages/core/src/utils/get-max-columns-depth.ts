@@ -1,17 +1,8 @@
 import { ColumnDefinition } from '@models';
-import { Queue } from './queue';
 
-const getColumnDepth = <TData>(column: ColumnDefinition<TData>) => {
-  let depth = 0;
-  const queue = Queue.from<ColumnDefinition<TData>>([column]);
-  while (!queue.isEmpty) {
-    depth += 1;
-    const node = queue.dequeue();
-    for (const child of node.children ?? []) {
-      queue.enqueue(child);
-    }
-  }
-  return depth;
+const getColumnDepth = <TData>(column: ColumnDefinition<TData>): number => {
+  if (!column.children || column.children.length === 0) return 1;
+  return 1 + Math.max(...column.children.map(getColumnDepth));
 };
 
 export const getMaxColumnsDepth = <TData>(columns: ColumnDefinition<TData>[]) => {

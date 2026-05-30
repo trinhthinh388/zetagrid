@@ -17,9 +17,29 @@ export type Header = {
    */
   isPlaceholder?: boolean;
   /**
+   * Indicates the column's cell is a leaf node.
+   */
+  isLeaf: boolean;
+  /**
    * The id of the column that the placeholder is associated with.
    */
   placeholderId?: string;
+  /**
+   * Width of the header cell in pixels.
+   */
+  width: number;
+  /**
+   * Height of the header cell in pixels.
+   */
+  height: number;
+  /**
+   * Left offset of the header cell in pixels (from header container left edge).
+   */
+  left: number;
+  /**
+   * Top offset of the header cell in pixels (from header container top edge).
+   */
+  top: number;
 };
 
 export type HeaderGroup = {

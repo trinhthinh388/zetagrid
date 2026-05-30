@@ -1,12 +1,12 @@
-import { Header, HeaderGroup } from '@models';
+import { Header, ZetaGridInstance } from '@models';
 import { PropsWithChildren } from 'react';
 
 export type ZetaElementAttributes = PropsWithChildren<{
-  [key: string]: string | undefined | Record<string, string>;
+  [key: string]: string | undefined | Record<string, string | number>;
   className: string;
   'data-slot': string;
   role: string;
-  style?: Record<string, string>;
+  style?: Record<string, string | number>;
 }>;
 
 export const contructElementAttributes = {
@@ -16,28 +16,31 @@ export const contructElementAttributes = {
       'data-slot': 'zeta-grid-root',
       role: 'grid',
     }) satisfies ZetaElementAttributes,
-  header: () =>
+  wrapper: ({ width, height }: ZetaGridInstance) =>
+    ({
+      className: 'zeta-grid__wrapper',
+      'data-slot': 'zeta-grid-wrapper',
+      role: 'grid',
+      style: { width, height },
+    }) satisfies ZetaElementAttributes,
+  header: (totalHeight: number) =>
     ({
       className: 'zeta-grid__header',
       'data-slot': 'header',
       role: 'presentation',
+      style: { height: totalHeight },
     }) satisfies ZetaElementAttributes,
-  headerRow: ({ id }: HeaderGroup) =>
-    ({
-      role: 'presentation',
-      'data-header-row-id': id,
-      className: 'zeta-grid__header-row',
-      'data-slot': 'header-row',
-    }) satisfies ZetaElementAttributes,
-  headerCell: ({ id = '', colSpan = 1, rowSpan = 1 }: Header) =>
+  headerCell: ({ id = '', width, height, left, top }: Header) =>
     ({
       'data-header-cell-id': id,
       className: 'zeta-grid__header-cell',
       'data-slot': 'header-cell',
       role: 'presentation',
       style: {
-        gridColumn: `span ${colSpan}`,
-        gridRow: `span ${rowSpan}`,
+        width,
+        height,
+        left,
+        top,
       },
     }) satisfies ZetaElementAttributes,
   headerTitle: () =>

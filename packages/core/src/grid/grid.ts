@@ -4,6 +4,8 @@ import { idGenerator } from '../utils';
 import { buildColumnsPaths } from '../utils/build-column-paths';
 import { getMaxColumnsDepth } from '../utils/get-max-columns-depth';
 
+const DEFAULT_HEADER_ROW_HEIGHT = 40;
+
 export type CreateZetaGridParams<TData> = {
   columnDefs: ColumnDefinition<TData>[];
 } & Partial<Pick<ZetaGridContext<TData>, 'width' | 'height'>>;
@@ -26,11 +28,22 @@ export const createGrid = <TData = unknown>({
     if (maxDepth === 0) return [];
 
     const paths = buildColumnsPaths({ columnDefs, maxDepth, currentDepth: 0 });
+
+    // Pre-compute the left offset for each leaf column (path index).
+    const leafLeftOffsets: number[] = [];
+    let cumulativeLeft = 0;
+    for (const path of paths) {
+      leafLeftOffsets.push(cumulativeLeft);
+      const leafNode = path[path.length - 1];
+      cumulativeLeft += leafNode.column.width;
+    }
+
     const groups: HeaderGroup[] = [];
 
     for (let d = 0; d < maxDepth; d++) {
       const levelNodes = paths.map((path) => path[d]);
       const headers: Header[] = [];
+      const top = d * DEFAULT_HEADER_ROW_HEIGHT;
 
       let i = 0;
       while (i < levelNodes.length) {
@@ -49,9 +62,27 @@ export const createGrid = <TData = unknown>({
         const isLeaf = !column.children || column.children.length === 0;
         const rowSpan = !node.isPlaceholder && isLeaf ? maxDepth - d : 1;
 
+        // Calculate exact width by summing the leaf column widths this cell spans.
+        let cellWidth = 0;
+        for (let j = i; j < i + colSpan; j++) {
+          const leafNode = paths[j][paths[j].length - 1];
+          cellWidth += leafNode.column.width;
+        }
+
+        // Calculate exact height from rowSpan.
+        const cellHeight = rowSpan * DEFAULT_HEADER_ROW_HEIGHT;
+
+        // Left offset is the cumulative width of all leaf columns before this cell.
+        const left = leafLeftOffsets[i];
+
         const headerId = node.isPlaceholder ? idGenerator.placeholder() : idGenerator.header();
 
         headers.push({
+          width: cellWidth,
+          height: cellHeight,
+          left,
+          top,
+          isLeaf,
           colSpan,
           rowSpan,
           id: headerId,
@@ -71,8 +102,17 @@ export const createGrid = <TData = unknown>({
     return groups;
   };
 
+  const getTotalHeaderHeight: ZetaGridInstance['getTotalHeaderHeight'] = () => {
+    const { columnDefs } = ctx;
+    const maxDepth = getMaxColumnsDepth<TData>(columnDefs);
+    return maxDepth * DEFAULT_HEADER_ROW_HEIGHT;
+  };
+
   const instance: ZetaGridInstance = {
+    width: ctx.width,
+    height: ctx.height,
     getHeaderGroups,
+    getTotalHeaderHeight,
     use: (module) => {
       ctx.modules.push(module);
       return instance;
