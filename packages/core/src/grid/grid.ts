@@ -15,6 +15,8 @@ export const createGrid = <TData = unknown>({
   height,
   columnDefs,
 }: CreateZetaGridParams<TData>): ZetaGridInstance => {
+  let totalHeaderHeight = 0;
+
   const ctx = createContext({
     width,
     height,
@@ -25,6 +27,7 @@ export const createGrid = <TData = unknown>({
     const { columnDefs } = ctx;
 
     const maxDepth = getMaxColumnsDepth<TData>(columnDefs);
+    totalHeaderHeight = maxDepth * DEFAULT_HEADER_ROW_HEIGHT;
     if (maxDepth === 0) return [];
 
     const paths = buildColumnsPaths({ columnDefs, maxDepth, currentDepth: 0 });
@@ -102,11 +105,7 @@ export const createGrid = <TData = unknown>({
     return groups;
   };
 
-  const getTotalHeaderHeight: ZetaGridInstance['getTotalHeaderHeight'] = () => {
-    const { columnDefs } = ctx;
-    const maxDepth = getMaxColumnsDepth<TData>(columnDefs);
-    return maxDepth * DEFAULT_HEADER_ROW_HEIGHT;
-  };
+  const getTotalHeaderHeight: ZetaGridInstance['getTotalHeaderHeight'] = () => totalHeaderHeight;
 
   const instance: ZetaGridInstance = {
     width: ctx.width,
