@@ -15,3 +15,5 @@ export interface IGridModule<TData = unknown> {
   mount?: (grid: ZetaGridInstance<TData>) => void;
   update?: (grid: ZetaGridInstance<TData>) => void;
 }
+
+export type GridModule<TData = unknown> = () => IGridModule<TData>;

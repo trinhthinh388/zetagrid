@@ -1,4 +1,4 @@
-import { ColumnDefinition, IGridModule, ZetaGridInstance, ZetaGridState } from '@models';
+import { ColumnDefinition, GridModule, ZetaGridInstance, ZetaGridState } from '@models';
 import { proxy, ref } from 'valtio';
 import { DEFAULT_GRID_SIZE } from '../constants';
 import { createContext } from '../context/context';
@@ -8,7 +8,7 @@ import { getMaxColumnsDepth } from '../utils/get-max-columns-depth';
 
 export type CreateZetaGridParams<TData> = {
   columnDefs: ColumnDefinition<TData>[];
-  modules?: IGridModule<TData>[];
+  modules?: GridModule<TData>[];
 };
 
 export const createGrid = <TData = unknown>({
@@ -23,20 +23,25 @@ export const createGrid = <TData = unknown>({
 
   const state = proxy<ZetaGridState<TData>>({
     isReady: false,
-    totalHeaderWidth: 0,
-    totalHeaderHeight: 0,
-    width: DEFAULT_GRID_SIZE,
-    height: DEFAULT_GRID_SIZE,
+    rect: {
+      containerWidth: DEFAULT_GRID_SIZE,
+      containerHeight: DEFAULT_GRID_SIZE,
+      headerHeight: 0,
+      headerWidth: 0,
+      bodyHeight: 0,
+      bodyWidth: 0,
+    },
     root: ref<ZetaGridState['root']>({ element: null }),
   });
 
   const use: ZetaGridInstance<TData>['use'] = (...modules) => {
     for (const module of modules) {
-      if (module.init) pipes.register('init', module.init);
-      if (module.mount) pipes.register('mount', module.mount);
-      if (module.update) pipes.register('update', module.update);
-      if (module.unmount) pipes.register('unmount', module.unmount);
-      ctx.modules.push(module);
+      const instance = module();
+      ctx.modules.push(instance);
+      if (instance.init) pipes.register('init', instance.init);
+      if (instance.mount) pipes.register('mount', instance.mount);
+      if (instance.update) pipes.register('update', instance.update);
+      if (instance.unmount) pipes.register('unmount', instance.unmount);
     }
     return instance;
   };
@@ -50,19 +55,8 @@ export const createGrid = <TData = unknown>({
     return headers;
   };
 
-  const setState: ZetaGridInstance<TData>['setState'] = (key, setter) => {
-    if (typeof setter === 'function') {
-      setter(state[key]);
-    } else {
-      state[key] = setter;
-    }
-  };
-
   const init: ZetaGridInstance<TData>['init'] = (root) => {
-    if (root)
-      setState('root', (state) => {
-        state.element = root;
-      });
+    if (root) state.root.element = root;
     logger.info('Init pipes - Starting');
     pipes.run('init', instance);
     logger.info('Init pipes - Successfully');
@@ -72,7 +66,7 @@ export const createGrid = <TData = unknown>({
     logger.info('Mount pipes - Starting');
     pipes.run('mount', instance);
     logger.info('Mount pipes - Successfully');
-    setState('isReady', true);
+    state.isReady = true;
   };
 
   const unmount: ZetaGridInstance<TData>['unmount'] = () => {
@@ -87,9 +81,8 @@ export const createGrid = <TData = unknown>({
     state,
     mount,
     unmount,
-    setState,
-    context: ctx,
     getHeaders,
+    context: ctx,
   };
 
   instance.use(...modules);

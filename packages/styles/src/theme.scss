@@ -74,7 +74,7 @@
 
   // Grid header cell
   --grid-header-cell-background: color-mix(in oklab, var(--muted) 50%, transparent);
-  --grid-header-cell-font-family: var(var(--grid-font-family));
+  --grid-header-cell-font-family: var(--grid-font-family);
   --grid-header-cell-font-size: 0.875rem;
   --grid-header-cell-font-weight: 500;
 }

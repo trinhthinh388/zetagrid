@@ -1,6 +1,7 @@
 import { contructElementAttributes, CreateZetaGridParams } from '@core';
 import '@zetagrid/styles';
 import { useState } from 'react';
+import { GridBody } from '../body';
 import { GridHeader } from '../header';
 import { GridProvider, useGrid } from '../hooks/use-grid';
 
@@ -14,8 +15,9 @@ const InnerGrid = () => {
   if (!isReady) return null;
 
   return (
-    <div {...contructElementAttributes.wrapper(grid)}>
+    <div {...contructElementAttributes.container(grid)}>
       <GridHeader />
+      <GridBody />
     </div>
   );
 };

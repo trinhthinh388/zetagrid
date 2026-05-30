@@ -1,33 +1,20 @@
 import { Header, ZetaElementAttributes, ZetaGridInstance } from '@models';
 import { DEFAULT_CELL_HEIGHT } from '../constants';
 
-export const contructElementAttributes = {
-  root: () =>
-    ({
-      className: 'zeta-grid__root',
-      'data-slot': 'zeta-grid-root',
-      role: 'grid',
-    }) satisfies ZetaElementAttributes,
-  wrapper: (grid: ZetaGridInstance) =>
-    ({
-      className: 'zeta-grid__wrapper',
-      'data-slot': 'zeta-grid-wrapper',
-      role: 'grid',
-      style: { width: grid.state.width, height: grid.state.height },
-    }) satisfies ZetaElementAttributes,
+const headerConstructors = {
   header: (grid: ZetaGridInstance) =>
     ({
       className: 'zeta-grid__header zeta-grid-no-scrollbar',
       'data-slot': 'header',
       role: 'presentation',
-      style: { width: grid.state.width, height: grid.state.totalHeaderHeight },
+      style: { width: grid.state.rect.containerWidth, height: grid.state.rect.headerHeight },
     }) satisfies ZetaElementAttributes,
-  headerWrapper: (grid: ZetaGridInstance) =>
+  headerContainer: (grid: ZetaGridInstance) =>
     ({
-      className: 'zeta-grid__header-wrapper',
-      'data-slot': 'header-wrapper',
+      className: 'zeta-grid__header-container',
+      'data-slot': 'header-container',
       role: 'presentation',
-      style: { width: grid.state.totalHeaderWidth, height: grid.state.totalHeaderHeight },
+      style: { width: grid.state.rect.headerWidth, height: grid.state.rect.headerHeight },
     }) satisfies ZetaElementAttributes,
   headerGroup: (header: Header) =>
     ({
@@ -40,10 +27,10 @@ export const contructElementAttributes = {
         height: header.height,
       },
     }) satisfies ZetaElementAttributes,
-  headerGroupWrapper: () =>
+  headerGroupContainer: () =>
     ({
-      className: 'zeta-grid__header-group-wrapper',
-      'data-slot': 'header-group-wrapper',
+      className: 'zeta-grid__header-group-container',
+      'data-slot': 'header-group-container',
       role: 'presentation',
     }) satisfies ZetaElementAttributes,
   headerCell: (header: Header) =>
@@ -63,4 +50,49 @@ export const contructElementAttributes = {
       'data-slot': 'header-title',
       role: 'presentation',
     }) satisfies ZetaElementAttributes,
+} as const;
+
+const gridConstructors = {
+  root: () =>
+    ({
+      className: 'zeta-grid__root',
+      'data-slot': 'zeta-grid-root',
+      role: 'grid',
+    }) satisfies ZetaElementAttributes,
+  container: (grid: ZetaGridInstance) =>
+    ({
+      className: 'zeta-grid__container',
+      'data-slot': 'zeta-grid-container',
+      role: 'grid',
+      style: { width: grid.state.rect.containerWidth, height: grid.state.rect.containerHeight },
+    }) satisfies ZetaElementAttributes,
+};
+
+const bodyConstructors = {
+  body: (grid: ZetaGridInstance) =>
+    ({
+      className: 'zeta-grid__body zeta-grid-no-scrollbar',
+      'data-slot': 'body',
+      role: 'presentation',
+      style: {
+        height: grid.state.rect.bodyHeight,
+        width: grid.state.rect.containerWidth,
+      },
+    }) satisfies ZetaElementAttributes,
+  bodyContainer: (grid: ZetaGridInstance) =>
+    ({
+      className: 'zeta-grid__body-container',
+      'data-slot': 'body-container',
+      role: 'presentation',
+      style: {
+        height: grid.state.rect.bodyHeight,
+        width: grid.state.rect.bodyWidth,
+      },
+    }) satisfies ZetaElementAttributes,
+} as const;
+
+export const contructElementAttributes = {
+  ...gridConstructors,
+  ...bodyConstructors,
+  ...headerConstructors,
 } as const;

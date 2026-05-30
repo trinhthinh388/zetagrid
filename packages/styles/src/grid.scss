@@ -10,7 +10,7 @@
     height: 100%;
   }
 
-  &__wrapper {
+  &__container {
     overflow: auto;
   }
 
@@ -22,14 +22,14 @@
     overflow: auto;
   }
 
-  &__header-wrapper {
+  &__header-container {
     display: flex;
   }
 
   &__header-group {
   }
 
-  &__header-group-wrapper {
+  &__header-group-container {
     display: flex;
   }
 
@@ -52,5 +52,5 @@
 }
 
 .zeta-grid-no-scrollbar {
-  scrollbar-width: none;
+  // scrollbar-width: none;
 }

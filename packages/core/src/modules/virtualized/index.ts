@@ -1,21 +1,29 @@
-import { ZetaGridInstance } from '@models';
+import { IGridModule, ZetaGridInstance } from '@models';
 import { createLogger } from '../../utils';
 
-const logger = createLogger('VirtualizedModule');
+export const VirtualizedModule = <TData>() => {
+  const logger = createLogger('VirtualizedModule');
 
-export const VirtualizedModule = {
-  _name: 'virtualized',
-  mount: (grid: ZetaGridInstance) => {
+  const watchRootSize = (grid: ZetaGridInstance<TData>) => {
     if (!grid.state.root || !grid.state.root.element) return;
-    const headers = grid.getHeaders();
-
     const { width, height } = grid.state.root.element.getBoundingClientRect();
-    const totalHeaderHeight = Math.max(...headers.map((it) => it.height));
-    const totalHeaderWidth = headers.reduce((sum, header) => sum + header.width, 0);
+    grid.state.rect.containerWidth = width;
+    grid.state.rect.containerHeight = height;
+  };
 
-    grid.setState('width', width);
-    grid.setState('height', height);
-    grid.setState('totalHeaderHeight', totalHeaderHeight);
-    grid.setState('totalHeaderWidth', totalHeaderWidth);
-  },
+  const watchHeaderSize = (grid: ZetaGridInstance<TData>) => {
+    const headers = grid.getHeaders();
+    const headerHeight = Math.max(...headers.map((it) => it.height));
+    const headerWidth = headers.reduce((sum, header) => sum + header.width, 0);
+    grid.state.rect.headerHeight = headerHeight;
+    grid.state.rect.headerWidth = headerWidth;
+  };
+
+  return {
+    _name: 'virtualized',
+    mount: (grid: ZetaGridInstance<TData>) => {
+      watchRootSize(grid);
+      watchHeaderSize(grid);
+    },
+  } satisfies IGridModule<TData>;
 };

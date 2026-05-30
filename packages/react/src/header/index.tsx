@@ -15,7 +15,7 @@ export const GridHeader = (props: GridHeaderProps) => {
           <div key={header.id} {...contructElementAttributes.headerCell(header)}>
             <div {...contructElementAttributes.headerTitle()}>{header.title}</div>
           </div>
-          <div {...contructElementAttributes.headerGroupWrapper()}>
+          <div {...contructElementAttributes.headerGroupContainer()}>
             {header.children.map(render)}
           </div>
         </div>
@@ -31,7 +31,9 @@ export const GridHeader = (props: GridHeaderProps) => {
 
   return (
     <div {...props} {...contructElementAttributes.header(grid)}>
-      <div {...contructElementAttributes.headerWrapper(grid)}>{grid.getHeaders().map(render)}</div>
+      <div {...contructElementAttributes.headerContainer(grid)}>
+        {grid.getHeaders().map(render)}
+      </div>
     </div>
   );
 };

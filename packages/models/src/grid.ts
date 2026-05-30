@@ -1,30 +1,42 @@
 import { ZetaGridContext } from './context';
 import { Header } from './header';
-import { IGridModule } from './module';
+import { GridModule } from './module';
 
-export type ZetaGridState<TData = unknown> = {
-  /**
-   * Flag to check if the grid is ready to render.
-   */
-  isReady: boolean;
+export type ZetaGridRect = {
   /**
    * Rendered Grid's width - in `px`
    * @default 500
    */
-  width: number;
+  containerWidth: number;
   /**
    * Rendered Grid's height - in `px`
    * @default 500
    */
-  height: number;
+  containerHeight: number;
   /**
-   * Total width of the Grid
+   * Total width of the header group
    */
-  totalHeaderWidth: number;
+  headerWidth: number;
   /**
-   * Total height of the Grid
+   * Total height of the header group
    */
-  totalHeaderHeight: number;
+  headerHeight: number;
+  /**
+   * Total width of the body group
+   */
+  bodyWidth: number;
+  /**
+   * Total height of the body group
+   */
+  bodyHeight: number;
+};
+
+export type ZetaGridState<TData = unknown> = {
+  rect: ZetaGridRect;
+  /**
+   * Flag to check if the grid is ready to render.
+   */
+  isReady: boolean;
   /**
    * Root element of the Grid
    */
@@ -37,7 +49,7 @@ export type ZetaGridInstance<TData = unknown> = {
   /**
    * Register ZetaGrid's modules to extends the functionality.
    */
-  use: (...modules: IGridModule<TData>[]) => ZetaGridInstance<TData>;
+  use: (...modules: GridModule<TData>[]) => ZetaGridInstance<TData>;
   /**
    * Initialize all registered modules.
    */
@@ -54,13 +66,6 @@ export type ZetaGridInstance<TData = unknown> = {
    * Get header groups.
    */
   getHeaders: () => Header[];
-  /**
-   * Update the grid context.
-   */
-  setState: <K extends keyof ZetaGridState<TData>>(
-    key: K,
-    state: ZetaGridState<TData>[K] | ((old: ZetaGridState<TData>[K]) => void),
-  ) => void;
   /**
    * Grid's context
    */
