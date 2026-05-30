@@ -1,3 +1,5 @@
 import { IGridModule } from '@models';
 
-export class VirtualizedModule<TContext> implements IGridModule<TContext> {}
+export class VirtualizedModule<TContext> implements IGridModule<TContext> {
+  static _name = 'virtualized';
+}

@@ -8,8 +8,10 @@ export type GridProps<TData> = CreateZetaGridParams<TData>;
 const InnerGrid = () => {
   const grid = useGrid();
 
+  if (!grid.isReady) return null;
+
   return (
-    <div {...contructElementAttributes.root(grid)}>
+    <div {...contructElementAttributes.root()}>
       <div {...contructElementAttributes.wrapper(grid)}>
         <GridHeader />
       </div>

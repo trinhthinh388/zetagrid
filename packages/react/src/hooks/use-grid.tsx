@@ -2,13 +2,14 @@ import { createGrid, type CreateZetaGridParams } from '@core';
 import { ZetaGridInstance } from '@models';
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
-const GridContext = createContext<ZetaGridInstance | undefined>(undefined);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const GridContext = createContext<ZetaGridInstance<any> | undefined>(undefined);
 
 export const GridProvider = <TData,>({
   children,
   ...params
 }: PropsWithChildren<CreateZetaGridParams<TData>>) => {
-  const [grid] = useState(() => createGrid(params));
+  const [grid] = useState(() => createGrid<TData>(params));
 
   useEffect(() => {
     grid.init();

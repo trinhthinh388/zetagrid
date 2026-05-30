@@ -3,12 +3,11 @@ import {
   Header,
   HeaderGroup,
   IGridModule,
-  ZetaElementAttributes,
   ZetaGridContext,
   ZetaGridInstance,
 } from '@models';
 import { createContext } from '../context/context';
-import { idGenerator } from '../utils';
+import { createLifeCyclePipe, idGenerator } from '../utils';
 import { buildColumnsPaths } from '../utils/build-column-paths';
 import { getMaxColumnsDepth } from '../utils/get-max-columns-depth';
 
@@ -25,14 +24,28 @@ export const createGrid = <TData = unknown>({
   columnDefs,
   modules = [],
 }: CreateZetaGridParams<TData>): ZetaGridInstance<TData> => {
+  const isReady = true;
   let totalHeaderHeight = 0;
+
+  const pipes = createLifeCyclePipe<TData>();
 
   const ctx = createContext<TData>({
     width,
     height,
-    modules,
     columnDefs,
   });
+
+  const use: ZetaGridInstance<TData>['use'] = (...modules) => {
+    for (const module of modules) {
+      if (module.init) pipes.register('init', module.init);
+      if (module.mount) pipes.register('mount', module.mount);
+      if (module.update) pipes.register('update', module.update);
+      if (module.unmount) pipes.register('unmount', module.unmount);
+
+      ctx.modules.push(module);
+    }
+    return instance;
+  };
 
   const getHeaderGroups: ZetaGridInstance<TData>['getHeaderGroups'] = () => {
     const { columnDefs } = ctx;
@@ -119,52 +132,22 @@ export const createGrid = <TData = unknown>({
   const getTotalHeaderHeight: ZetaGridInstance<TData>['getTotalHeaderHeight'] = () =>
     totalHeaderHeight;
 
-  const applyElementAttributes: ZetaGridInstance<TData>['applyElementAttributes'] = (
-    slot,
-    attributes,
-  ) => {
-    let result: ZetaElementAttributes = { ...attributes };
-    for (const module of ctx.modules) {
-      if (module.modifyElementAttributes) {
-        result = module.modifyElementAttributes({ slot, context: ctx, attributes });
-      }
-    }
-    return result;
-  };
-
   const init = () => {
-    for (const module of ctx.modules) {
-      if (module.init) {
-        module.init(instance);
-      }
-    }
+    pipes.run('init', instance);
   };
 
-  const destroy = () => {
-    for (const module of ctx.modules) {
-      if (module.destroy) {
-        module.destroy(instance);
-      }
-    }
+  const unmount = () => {
+    pipes.run('unmount', instance);
   };
 
   const instance: ZetaGridInstance<TData> = {
+    use,
     init,
-    destroy,
+    unmount,
+    isReady,
+    context: ctx,
     getHeaderGroups,
-    width: ctx.width,
-    height: ctx.height,
     getTotalHeaderHeight,
-    applyElementAttributes,
-    use: (...newModules) => {
-      newModules.forEach((module) => {
-        ctx.modules.push(module);
-        if (module.register) {
-          module.register(instance);
-        }
-      });
-      return instance;
-    },
   };
 
   if (modules && modules.length > 0) {

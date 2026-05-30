@@ -1,5 +1,6 @@
+import { ZetaGridContext } from './context';
 import { HeaderGroup } from './header';
-import { IGridModule, ZetaElementAttributes } from './module';
+import { IGridModule } from './module';
 
 export type ZetaGridInstance<TData = unknown> = {
   /**
@@ -11,9 +12,9 @@ export type ZetaGridInstance<TData = unknown> = {
    */
   init: () => void;
   /**
-   * Destroy the grid instance and clean up modules and listeners.
+   * Unomunt the grid instance and clean up modules and listeners.
    */
-  destroy: () => void;
+  unmount: () => void;
   /**
    * Get header groups.
    */
@@ -24,19 +25,13 @@ export type ZetaGridInstance<TData = unknown> = {
    */
   getTotalHeaderHeight: () => number;
   /**
-   * Rendered width
+   * Grid's context
    */
-  width: number;
+  context: ZetaGridContext<TData>;
   /**
-   * Rendered height
+   * Flag to check if the grid is ready to render.
    */
-  height: number;
-
-  /** Attribute Hook Application */
-  applyElementAttributes: (
-    slot: string,
-    attributes: ZetaElementAttributes,
-  ) => ZetaElementAttributes;
+  isReady: boolean;
 };
 
 export type ZetaGridLifeCycle = 'init' | 'mount' | 'update' | 'unmount';

@@ -1,4 +1,3 @@
-import { ZetaGridContext } from './context';
 import { ZetaGridInstance } from './grid';
 
 export type ZetaElementAttributes = {
@@ -12,11 +11,7 @@ export type ZetaElementAttributes = {
 export interface IGridModule<TData = unknown> {
   _name: string;
   init?: (grid: ZetaGridInstance<TData>) => void;
-  destroy?: (grid: ZetaGridInstance<TData>) => void;
-  register?: (grid: ZetaGridInstance<TData>) => void;
-  modifyElementAttributes?: (params: {
-    slot: string;
-    context: ZetaGridContext<TData>;
-    attributes: ZetaElementAttributes;
-  }) => ZetaElementAttributes;
+  unmount?: (grid: ZetaGridInstance<TData>) => void;
+  mount?: (grid: ZetaGridInstance<TData>) => void;
+  update?: (grid: ZetaGridInstance<TData>) => void;
 }
