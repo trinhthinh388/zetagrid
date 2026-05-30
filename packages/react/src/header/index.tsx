@@ -8,10 +8,8 @@ export const GridHeader = (props: GridHeaderProps) => {
   const { getHeaderGroups } = useGrid();
   const headerGroups = getHeaderGroups();
 
-  const lastGroup = headerGroups[headerGroups.length - 1];
-  const leafCount = lastGroup
-    ? lastGroup.getHeaders().reduce((sum, h) => sum + (h.colSpan ?? 1), 0)
-    : 0;
+  const lastGroup = headerGroups.at(-1);
+  const leafCount = lastGroup?.getHeaders().reduce((sum, h) => sum + (h.colSpan ?? 1), 0) ?? 0;
 
   return (
     <div
@@ -23,22 +21,11 @@ export const GridHeader = (props: GridHeaderProps) => {
       }}
     >
       {headerGroups.map((headerGroup) => (
-        <div
-          key={headerGroup.id}
-          {...contructElementAttributes.headerRow({ id: headerGroup.id })}
-          style={{ display: 'contents' }}
-        >
+        <div key={headerGroup.id} {...contructElementAttributes.headerRow(headerGroup)}>
           {headerGroup.getHeaders().map((header) => {
             if (header.isPlaceholder) return null;
             return (
-              <div
-                key={header.id}
-                {...contructElementAttributes.headerCell({ id: header.id })}
-                style={{
-                  gridColumn: `span ${header.colSpan ?? 1}`,
-                  gridRow: `span ${header.rowSpan ?? 1}`,
-                }}
-              >
+              <div key={header.id} {...contructElementAttributes.headerCell(header)}>
                 <div {...contructElementAttributes.headerTitle()}>{header.title}</div>
               </div>
             );
