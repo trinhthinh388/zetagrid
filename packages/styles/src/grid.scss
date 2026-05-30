@@ -9,7 +9,7 @@
   }
 
   &__header {
-    display: flex;
+    display: grid;
     border-bottom: $border-width-1 solid $border;
     border-top-right-radius: inherit;
     border-top-left-radius: inherit;
@@ -17,18 +17,16 @@
   }
 
   &__header-row {
-    display: flex;
-    border-top-right-radius: inherit;
-    border-top-left-radius: inherit;
-    background-color: $muted;
-    width: 100%;
+    display: contents;
   }
 
   &__header-cell {
     display: flex;
     align-items: center;
     border-bottom: $border-width-1 solid $border;
+    background-color: $muted;
     padding-inline: $spacing-2;
+    min-height: 40px;
   }
 
   &__header-title {
