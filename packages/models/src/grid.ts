@@ -20,7 +20,7 @@ export type ZetaGridState<TData = unknown> = {
   /**
    * Root element of the Grid
    */
-  root: {
+  readonly root: {
     element: HTMLElement | null;
   };
 };
@@ -50,9 +50,9 @@ export type ZetaGridInstance<TData = unknown> = {
   /**
    * Update the grid context.
    */
-  setState: <K extends Exclude<keyof ZetaGridState<TData>, 'root'>>(
+  setState: <K extends keyof ZetaGridState<TData>>(
     key: K,
-    state: ZetaGridState<TData>[K],
+    state: ZetaGridState<TData>[K] | ((old: ZetaGridState<TData>[K]) => void),
   ) => void;
   /**
    * Grid's context

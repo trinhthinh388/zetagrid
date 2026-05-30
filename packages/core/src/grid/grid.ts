@@ -131,15 +131,22 @@ export const createGrid = <TData = unknown>({
     return groups;
   };
 
-  const setState: ZetaGridInstance<TData>['setState'] = (key, value) => {
-    state[key] = value;
+  const setState: ZetaGridInstance<TData>['setState'] = (key, setter) => {
+    if (typeof setter === 'function') {
+      setter(state[key]);
+    } else {
+      state[key] = setter;
+    }
   };
 
   const getTotalHeaderHeight: ZetaGridInstance<TData>['getTotalHeaderHeight'] = () =>
     totalHeaderHeight;
 
   const init: ZetaGridInstance<TData>['init'] = (root) => {
-    if (root) state.root.element = root;
+    if (root)
+      setState('root', (state) => {
+        state.element = root;
+      });
     logger.info('Init pipes - Starting');
     pipes.run('init', instance);
     logger.info('Init pipes - Successfully');

@@ -9,7 +9,7 @@ export const VirtualizedModule = {
     logger.info('VirtualizedModule initialized');
     if (!grid.state.root || !grid.state.root.element) return;
     const { width, height } = grid.state.root.element.getBoundingClientRect();
-    grid.state.width = width;
-    grid.state.height = height;
+    grid.setState('width', width);
+    grid.setState('height', height);
   },
 };
