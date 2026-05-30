@@ -16,7 +16,11 @@ export const GridProvider = <TData,>({ children, root, ...params }: GridProvider
 
   useLayoutEffect(() => {
     if (!root) return;
+
     grid.init(root);
+
+    grid.mount();
+
     return () => grid.unmount();
   }, [grid, root]);
 

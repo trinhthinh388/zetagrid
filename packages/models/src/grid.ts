@@ -1,5 +1,5 @@
 import { ZetaGridContext } from './context';
-import { HeaderGroup } from './header';
+import { Header } from './header';
 import { IGridModule } from './module';
 
 export type ZetaGridState<TData = unknown> = {
@@ -8,15 +8,23 @@ export type ZetaGridState<TData = unknown> = {
    */
   isReady: boolean;
   /**
-   * Grid's width - in `px`
+   * Rendered Grid's width - in `px`
    * @default 500
    */
   width: number;
   /**
-   * Grid's height - in `px`
+   * Rendered Grid's height - in `px`
    * @default 500
    */
   height: number;
+  /**
+   * Total width of the Grid
+   */
+  totalHeaderWidth: number;
+  /**
+   * Total height of the Grid
+   */
+  totalHeaderHeight: number;
   /**
    * Root element of the Grid
    */
@@ -35,18 +43,17 @@ export type ZetaGridInstance<TData = unknown> = {
    */
   init: (root?: HTMLElement) => void;
   /**
+   * Runs when grid is mounted
+   */
+  mount: () => void;
+  /**
    * Unomunt the grid instance and clean up modules and listeners.
    */
   unmount: () => void;
   /**
    * Get header groups.
    */
-  getHeaderGroups: () => HeaderGroup[];
-  /**
-   * Returns the total height of the header section in pixels,
-   * calculated as `headerRowHeight * numberOfHeaderRows`.
-   */
-  getTotalHeaderHeight: () => number;
+  getHeaders: () => Header[];
   /**
    * Update the grid context.
    */

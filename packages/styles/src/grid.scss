@@ -2,7 +2,7 @@
 
 .zeta-grid {
   &__root {
-    display: flex;
+    box-sizing: content-box;
     border: $border-width-1 solid $border;
     border-radius: $radius;
     background-color: $background;
@@ -19,12 +19,22 @@
     border-bottom: $border-width-1 solid $border;
     border-top-right-radius: inherit;
     border-top-left-radius: inherit;
-    width: 100%;
+    overflow: auto;
+  }
+
+  &__header-wrapper {
+    display: flex;
+  }
+
+  &__header-group {
+  }
+
+  &__header-group-wrapper {
+    display: flex;
   }
 
   &__header-cell {
     display: flex;
-    position: absolute;
     align-items: center;
     box-sizing: border-box;
     border-bottom: $border-width-1 solid $border;
@@ -39,4 +49,8 @@
     font-size: $grid-header-cell-font-size;
     font-family: $grid-header-cell-font-family;
   }
+}
+
+.zeta-grid-no-scrollbar {
+  scrollbar-width: none;
 }

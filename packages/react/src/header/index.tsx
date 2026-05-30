@@ -1,26 +1,37 @@
 import { contructElementAttributes } from '@core';
-import { PropsWithChildren } from 'react';
+import { Header } from '@models';
+import { PropsWithChildren, useCallback } from 'react';
 import { useGrid } from '../hooks/use-grid';
 
 export type GridHeaderProps = PropsWithChildren;
 
 export const GridHeader = (props: GridHeaderProps) => {
   const grid = useGrid();
-  const headerGroups = grid.getHeaderGroups();
-  const totalHeight = grid.getTotalHeaderHeight();
+
+  const render = useCallback((header: Header) => {
+    if (header.isGroup) {
+      return (
+        <div key={header.id} {...contructElementAttributes.headerGroup(header)}>
+          <div key={header.id} {...contructElementAttributes.headerCell(header)}>
+            <div {...contructElementAttributes.headerTitle()}>{header.title}</div>
+          </div>
+          <div {...contructElementAttributes.headerGroupWrapper()}>
+            {header.children.map(render)}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div key={header.id} {...contructElementAttributes.headerCell(header)}>
+        <div {...contructElementAttributes.headerTitle()}>{header.title}</div>
+      </div>
+    );
+  }, []);
 
   return (
-    <div {...props} {...contructElementAttributes.header(totalHeight)}>
-      {headerGroups.map((headerGroup) =>
-        headerGroup.getHeaders().map((header) => {
-          if (header.isPlaceholder) return null;
-          return (
-            <div key={header.id} {...contructElementAttributes.headerCell(header)}>
-              <div {...contructElementAttributes.headerTitle()}>{header.title}</div>
-            </div>
-          );
-        }),
-      )}
+    <div {...props} {...contructElementAttributes.header(grid)}>
+      <div {...contructElementAttributes.headerWrapper(grid)}>{grid.getHeaders().map(render)}</div>
     </div>
   );
 };
