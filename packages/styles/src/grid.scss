@@ -26,10 +26,11 @@
     border-bottom: $border-width-1 solid $border;
     background-color: $muted;
     padding-inline: $spacing-2;
-    min-height: 40px;
   }
 
   &__header-title {
     color: $foreground;
+    font-weight: $grid-header-cell-font-weight;
+    font-size: $grid-header-cell-font-size;
   }
 }
