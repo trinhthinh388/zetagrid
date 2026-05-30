@@ -1,4 +1,12 @@
-import { ColumnDefinition, Header, HeaderGroup, ZetaGridContext, ZetaGridInstance } from '@models';
+import {
+  ColumnDefinition,
+  Header,
+  HeaderGroup,
+  IGridModule,
+  ZetaElementAttributes,
+  ZetaGridContext,
+  ZetaGridInstance,
+} from '@models';
 import { createContext } from '../context/context';
 import { idGenerator } from '../utils';
 import { buildColumnsPaths } from '../utils/build-column-paths';
@@ -8,12 +16,14 @@ const DEFAULT_HEADER_ROW_HEIGHT = 40;
 
 export type CreateZetaGridParams<TData> = {
   columnDefs: ColumnDefinition<TData>[];
+  modules?: IGridModule[];
 } & Partial<Pick<ZetaGridContext<TData>, 'width' | 'height'>>;
 
 export const createGrid = <TData = unknown>({
   width,
   height,
   columnDefs,
+  modules = [],
 }: CreateZetaGridParams<TData>): ZetaGridInstance => {
   let totalHeaderHeight = 0;
 
@@ -21,6 +31,7 @@ export const createGrid = <TData = unknown>({
     width,
     height,
     columnDefs,
+    modules: [],
   });
 
   const getHeaderGroups: ZetaGridInstance['getHeaderGroups'] = () => {
@@ -107,16 +118,58 @@ export const createGrid = <TData = unknown>({
 
   const getTotalHeaderHeight: ZetaGridInstance['getTotalHeaderHeight'] = () => totalHeaderHeight;
 
+  const applyElementAttributes: ZetaGridInstance['applyElementAttributes'] = (
+    slot,
+    attributes,
+    context,
+  ) => {
+    let result: ZetaElementAttributes = { ...attributes };
+    for (const module of ctx.modules) {
+      if (module.modifyElementAttributes) {
+        result = module.modifyElementAttributes({ slot, context, attributes });
+      }
+    }
+    return result;
+  };
+
+  const init = () => {
+    for (const module of ctx.modules) {
+      if (module.init) {
+        module.init(instance);
+      }
+    }
+  };
+
+  const destroy = () => {
+    for (const module of ctx.modules) {
+      if (module.destroy) {
+        module.destroy(instance);
+      }
+    }
+  };
+
   const instance: ZetaGridInstance = {
+    init,
+    destroy,
+    getHeaderGroups,
     width: ctx.width,
     height: ctx.height,
-    getHeaderGroups,
     getTotalHeaderHeight,
-    use: (module) => {
-      ctx.modules.push(module);
+    applyElementAttributes,
+    use: (...newModules) => {
+      newModules.forEach((module) => {
+        ctx.modules.push(module);
+        if (module.register) {
+          module.register(instance);
+        }
+      });
       return instance;
     },
   };
+
+  if (modules && modules.length > 0) {
+    instance.use(...modules);
+  }
 
   return instance;
 };

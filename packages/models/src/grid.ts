@@ -1,11 +1,19 @@
 import { HeaderGroup } from './header';
-import { IGridModule } from './module';
+import { IGridModule, ZetaElementAttributes } from './module';
 
-export type ZetaGridInstance = {
+export type ZetaGridInstance<TContext = unknown> = {
   /**
    * Register ZetaGrid's modules to extends the functionality.
    */
-  use: (...modules: IGridModule[]) => ZetaGridInstance;
+  use: (...modules: IGridModule[]) => ZetaGridInstance<TContext>;
+  /**
+   * Initialize all registered modules.
+   */
+  init: () => void;
+  /**
+   * Destroy the grid instance and clean up modules and listeners.
+   */
+  destroy: () => void;
   /**
    * Get header groups.
    */
@@ -23,6 +31,13 @@ export type ZetaGridInstance = {
    * Rendered height
    */
   height: number;
+
+  /** Attribute Hook Application */
+  applyElementAttributes: (
+    slot: string,
+    attributes: ZetaElementAttributes,
+    context?: TContext,
+  ) => ZetaElementAttributes;
 };
 
 export type ZetaGridLifeCycle = 'init' | 'mount' | 'update' | 'unmount';

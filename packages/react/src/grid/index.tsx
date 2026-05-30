@@ -9,7 +9,7 @@ const InnerGrid = () => {
   const grid = useGrid();
 
   return (
-    <div {...contructElementAttributes.root()}>
+    <div {...contructElementAttributes.root(grid)}>
       <div {...contructElementAttributes.wrapper(grid)}>
         <GridHeader />
       </div>

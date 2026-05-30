@@ -1,6 +1,6 @@
 import { createGrid, type CreateZetaGridParams } from '@core';
 import { ZetaGridInstance } from '@models';
-import { createContext, PropsWithChildren, useContext, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 const GridContext = createContext<ZetaGridInstance | undefined>(undefined);
 
@@ -9,6 +9,11 @@ export const GridProvider = <TData,>({
   ...params
 }: PropsWithChildren<CreateZetaGridParams<TData>>) => {
   const [grid] = useState(() => createGrid(params));
+
+  useEffect(() => {
+    grid.init();
+    return () => grid.destroy();
+  }, [grid]);
 
   return <GridContext.Provider value={grid}>{children}</GridContext.Provider>;
 };
