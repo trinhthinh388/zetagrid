@@ -69,7 +69,12 @@
   --border-width-4: 4px;
   --border-width-8: 8px;
 
+  // Typography
+  --grid-font-family: 'Geist Variable', sans-serif;
+
   // Grid header cell
+  --grid-header-cell-background: color-mix(in oklab, var(--muted) 50%, transparent);
+  --grid-header-cell-font-family: var(var(--grid-font-family));
   --grid-header-cell-font-size: 0.875rem;
   --grid-header-cell-font-weight: 500;
 }

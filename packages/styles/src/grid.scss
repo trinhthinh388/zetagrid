@@ -24,13 +24,17 @@
     display: flex;
     align-items: center;
     border-bottom: $border-width-1 solid $border;
-    background-color: $muted;
+    background-color: $grid-header-cell-background;
     padding-inline: $spacing-2;
+    height: 100%;
+    min-height: $spacing-10;
   }
 
   &__header-title {
+    padding-inline: $spacing-2;
     color: $foreground;
     font-weight: $grid-header-cell-font-weight;
     font-size: $grid-header-cell-font-size;
+    font-family: $grid-header-cell-font-family;
   }
 }

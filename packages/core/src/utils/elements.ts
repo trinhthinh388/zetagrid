@@ -28,7 +28,6 @@ export const contructElementAttributes = {
       'data-header-row-id': id,
       className: 'zeta-grid__header-row',
       'data-slot': 'header-row',
-      style: { display: 'contents' },
     }) satisfies ZetaElementAttributes,
   headerCell: ({ id = '', colSpan = 1, rowSpan = 1 }: Header) =>
     ({
