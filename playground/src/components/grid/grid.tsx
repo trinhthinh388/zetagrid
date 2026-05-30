@@ -3,5 +3,9 @@ import { Grid as ZetaGrid } from '@react';
 import { columnDefs } from './columns';
 
 export const Grid = () => {
-  return <ZetaGrid columnDefs={columnDefs} modules={[VirtualizedModule]} />;
+  return (
+    <div className="w-[1024px] h-[768px] mx-auto">
+      <ZetaGrid columnDefs={columnDefs} modules={[VirtualizedModule]} />
+    </div>
+  );
 };

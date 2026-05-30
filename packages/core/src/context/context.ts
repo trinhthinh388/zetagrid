@@ -1,6 +1,7 @@
 import { ZetaGridContext } from '@models';
 
 export const createContext = <TData>({
+  root = null,
   width = 500,
   height = 500,
   modules = [],
@@ -9,6 +10,7 @@ export const createContext = <TData>({
 }: Partial<ZetaGridContext<TData>> = {}): ZetaGridContext<TData> => {
   return {
     ...initial,
+    root,
     width,
     height,
     modules,

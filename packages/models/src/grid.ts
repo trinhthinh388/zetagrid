@@ -25,6 +25,10 @@ export type ZetaGridInstance<TData = unknown> = {
    */
   getTotalHeaderHeight: () => number;
   /**
+   * Update the grid context. Using this to update root, width, height ...
+   */
+  setContext: (partialContext: Partial<ZetaGridContext<TData>>) => void;
+  /**
    * Grid's context
    */
   context: ZetaGridContext<TData>;

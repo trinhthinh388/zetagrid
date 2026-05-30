@@ -5,16 +5,17 @@ import { createContext, PropsWithChildren, useContext, useLayoutEffect, useState
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const GridContext = createContext<ZetaGridInstance<any> | undefined>(undefined);
 
-export const GridProvider = <TData,>({
-  children,
-  ...params
-}: PropsWithChildren<CreateZetaGridParams<TData>>) => {
+export type GridProviderProps<TData> = PropsWithChildren<CreateZetaGridParams<TData>>;
+
+export const GridProvider = <TData,>({ children, root, ...params }: GridProviderProps<TData>) => {
   const [grid] = useState(() => createGrid<TData>(params));
 
   useLayoutEffect(() => {
+    if (!root) return;
+    grid.setContext({ root });
     grid.init();
     return () => grid.unmount();
-  }, [grid]);
+  }, [grid, root]);
 
   return <GridContext.Provider value={grid}>{children}</GridContext.Provider>;
 };

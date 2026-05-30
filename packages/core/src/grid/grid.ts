@@ -16,20 +16,22 @@ const DEFAULT_HEADER_ROW_HEIGHT = 40;
 export type CreateZetaGridParams<TData> = {
   columnDefs: ColumnDefinition<TData>[];
   modules?: IGridModule<TData>[];
-} & Partial<Pick<ZetaGridContext<TData>, 'width' | 'height'>>;
+} & Partial<Pick<ZetaGridContext<TData>, 'width' | 'height' | 'root'>>;
 
 export const createGrid = <TData = unknown>({
+  root,
   width,
   height,
   columnDefs,
   modules = [],
 }: CreateZetaGridParams<TData>): ZetaGridInstance<TData> => {
-  const isReady = true;
+  let isReady = false;
   let totalHeaderHeight = 0;
 
   const logger = createLogger('Grid');
   const pipes = createLifeCyclePipe<TData>();
   const ctx = createContext<TData>({
+    root,
     width,
     height,
     columnDefs,
@@ -129,12 +131,17 @@ export const createGrid = <TData = unknown>({
     return groups;
   };
 
+  const setContext: ZetaGridInstance<TData>['setContext'] = (partials) => {
+    Object.assign(ctx, partials);
+  };
+
   const getTotalHeaderHeight: ZetaGridInstance<TData>['getTotalHeaderHeight'] = () =>
     totalHeaderHeight;
 
   const init = () => {
     logger.info('Running Init pipes');
     pipes.run('init', instance);
+    isReady = true;
   };
 
   const unmount = () => {
@@ -147,6 +154,7 @@ export const createGrid = <TData = unknown>({
     init,
     unmount,
     isReady,
+    setContext,
     context: ctx,
     getHeaderGroups,
     getTotalHeaderHeight,
