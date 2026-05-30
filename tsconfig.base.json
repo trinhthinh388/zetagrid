@@ -3,7 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "rootDir": ".",
-    "target": "ES2025",
+    "target": "esnext",
     "sourceMap": true,
     "declaration": true,
     "module": "preserve",
