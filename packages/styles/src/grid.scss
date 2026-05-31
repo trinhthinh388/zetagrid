@@ -21,6 +21,7 @@
     border-bottom: $border-width-1 solid $border;
     border-top-right-radius: inherit;
     border-top-left-radius: inherit;
+    background-color: $grid-header-cell-background;
     overflow-x: auto;
     overflow-y: hidden;
   }
@@ -41,7 +42,6 @@
     align-items: center;
     box-sizing: border-box;
     border-bottom: $border-width-1 solid $border;
-    background-color: $grid-header-cell-background;
     padding-inline: $spacing-2;
   }
 

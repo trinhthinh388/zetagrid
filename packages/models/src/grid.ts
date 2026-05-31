@@ -85,9 +85,14 @@ export type ZetaGridInstance<TData = unknown> = {
    */
   getHeaders: () => Header[];
   /**
+   *
    * Get the total scroll width of the Grid
    */
   getTotalWidth: () => number;
+  /**
+   * Get the total scroll height of the Grid
+   */
+  getTotalHeight: () => number;
   /**
    * Grid's context
    */

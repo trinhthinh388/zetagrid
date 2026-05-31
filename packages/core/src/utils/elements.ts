@@ -97,17 +97,21 @@ const scrollbarConstructors = {
     ({
       className: `zeta-grid__scrollbar-track zeta-grid__scrollbar-track--${orientation}`,
       'aria-orientation': orientation,
-      'data-slot': 'scrollbar-track',
+      'data-slot': DATA_SLOTS.SCROLLBAR_TRACK,
       role: 'scrollbar',
     }) satisfies ZetaElementAttributes,
   scrollbarThumb: (grid: ZetaGridInstance, orientation: 'horizontal' | 'vertical') =>
     ({
       className: 'zeta-grid__scrollbar-thumb',
-      'data-slot': 'scrollbar-thumb',
+      'data-slot': DATA_SLOTS.SCROLLBAR_THUMB,
       role: 'presentation',
       style: {
         [orientation === 'horizontal' ? 'width' : 'height']:
           grid.state.scrollState.thumb[orientation].size,
+        transform:
+          orientation === 'horizontal'
+            ? `translate3d(${grid.state.scrollState.thumb.horizontal.offset}px, 0px, 0px)`
+            : `translate3d(0px, ${grid.state.scrollState.thumb.vertical.offset}px, 0px)`,
       },
     }) satisfies ZetaElementAttributes,
 } as const;

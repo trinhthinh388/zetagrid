@@ -7,18 +7,62 @@ export const ScrollModule = <TData>() => {
 
   const cleanups: VoidFunction[] = [];
 
-  const calculateScrollThumbSize = (grid: ZetaGridInstance<TData>) => {
-    const { rect, scrollState } = grid.state;
-    const verticalTrackSize = rect.containerHeight;
-    const horizontalTrackSize = rect.containerWidth;
-    const horizontalThumbSize = horizontalTrackSize * (rect.containerWidth / rect.headerWidth);
-    const verticalThumbSize = verticalTrackSize * (rect.containerHeight / rect.bodyHeight);
+  const updateHorizontalScrollbar = (grid: ZetaGridInstance<TData>) => {
+    const {
+      scrollState,
+      rect,
+      elements: { header, body, root },
+    } = grid.state;
+    if (!root || !header || !body) return;
 
-    scrollState.thumb.horizontal.size = Math.max(horizontalThumbSize, MIN_SCROLLBAR_THUMB_SIZE);
-    scrollState.thumb.vertical.size = Math.max(verticalThumbSize, MIN_SCROLLBAR_THUMB_SIZE);
+    const trackWidth = rect.containerWidth;
+    const thumbSize = Math.max(
+      trackWidth * (rect.containerWidth / grid.getTotalWidth()),
+      MIN_SCROLLBAR_THUMB_SIZE,
+    );
+    const scrollWidth = body.scrollWidth;
+    const clientWidth = body.clientWidth;
+    const scrollLeft = body.scrollLeft;
+    const maxScrollLeft = scrollWidth - clientWidth;
+    const maxOffset = trackWidth - thumbSize;
+    const offset = maxScrollLeft > 0 ? (scrollLeft / maxScrollLeft) * maxOffset : 0;
+
+    scrollState.thumb.horizontal.size =
+      rect.containerWidth === grid.getTotalWidth() ? 0 : thumbSize;
+    scrollState.thumb.horizontal.offset = offset;
   };
 
-  const watchScroll = (grid: ZetaGridInstance<TData>) => {
+  const updateVerticalScrollbar = (grid: ZetaGridInstance<TData>) => {
+    const {
+      scrollState,
+      rect,
+      elements: { header, body, root },
+    } = grid.state;
+    if (!root || !header || !body) return;
+
+    const trackHeight = rect.containerHeight;
+    const thumbSize = Math.max(
+      trackHeight * (rect.containerHeight / grid.getTotalHeight()),
+      MIN_SCROLLBAR_THUMB_SIZE,
+    );
+    const scrollHeight = body.scrollHeight;
+    const clientHeight = body.clientHeight;
+    const scrollTop = body.scrollTop;
+    const maxScrollHeight = scrollHeight - clientHeight;
+    const maxOffset = trackHeight - thumbSize;
+    const offset = maxScrollHeight > 0 ? (scrollTop / maxScrollHeight) * maxOffset : 0;
+
+    scrollState.thumb.vertical.size =
+      rect.containerHeight === grid.getTotalHeight() ? 0 : thumbSize;
+    scrollState.thumb.vertical.offset = offset;
+  };
+
+  const updateScrollbar = (grid: ZetaGridInstance<TData>) => {
+    updateVerticalScrollbar(grid);
+    updateHorizontalScrollbar(grid);
+  };
+
+  const trackScrollPosition = (grid: ZetaGridInstance<TData>) => {
     const { root, header, body } = grid.state.elements;
     if (!root || !header || !body) return;
 
@@ -29,21 +73,26 @@ export const ScrollModule = <TData>() => {
         return;
       }
       // Sync scroll position between Header and Body
-      if (source === header) body.scroll({ top: source.scrollTop, left: source.scrollLeft });
-      if (source === body) header.scroll({ top: source.scrollTop, left: source.scrollLeft });
+      if (source === header) {
+        body.scrollLeft = header.scrollLeft;
+      } else if (source === body) {
+        header.scrollLeft = body.scrollLeft;
+      }
+      updateScrollbar(grid);
     };
-    root?.addEventListener('scroll', onScroll, {
+
+    root.addEventListener('scroll', onScroll, {
       capture: true,
       passive: true,
     });
-    cleanups.push(() => root?.removeEventListener('scroll', onScroll));
+    cleanups.push(() => root.removeEventListener('scroll', onScroll));
   };
 
   return {
     _name: 'Scroll',
     mount: (grid: ZetaGridInstance<TData>) => {
-      calculateScrollThumbSize(grid);
-      watchScroll(grid);
+      updateScrollbar(grid);
+      trackScrollPosition(grid);
     },
     unmount: () => {
       cleanups.forEach((cleanup) => cleanup());

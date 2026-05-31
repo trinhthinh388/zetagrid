@@ -82,7 +82,10 @@ export const createGrid = <TData = unknown>({
   };
 
   const getTotalWidth: ZetaGridInstance<TData>['getTotalWidth'] = () =>
-    Math.max(state.rect.bodyWidth, state.rect.headerWidth);
+    Math.max(state.rect.bodyWidth, state.rect.headerWidth, state.rect.containerWidth);
+
+  const getTotalHeight: ZetaGridInstance<TData>['getTotalHeight'] = () =>
+    Math.max(state.rect.bodyHeight + state.rect.headerHeight, state.rect.containerHeight);
   // #endregion
 
   // #region Life cycle
@@ -125,6 +128,7 @@ export const createGrid = <TData = unknown>({
     getHeaders,
     context: ctx,
     getTotalWidth,
+    getTotalHeight,
   };
 
   instance.use(...modules);
