@@ -1,20 +1,20 @@
 import { Header, ZetaElementAttributes, ZetaGridInstance } from '@models';
-import { DEFAULT_CELL_HEIGHT } from '../constants';
+import { DATA_SLOTS, DEFAULT_CELL_HEIGHT } from '../constants';
 
 const headerConstructors = {
   header: (grid: ZetaGridInstance) =>
     ({
       className: 'zeta-grid__header zeta-grid-no-scrollbar',
-      'data-slot': 'header',
+      'data-slot': DATA_SLOTS.HEADER,
       role: 'presentation',
       style: { width: grid.state.rect.containerWidth, height: grid.state.rect.headerHeight },
     }) satisfies ZetaElementAttributes,
   headerContainer: (grid: ZetaGridInstance) =>
     ({
       className: 'zeta-grid__header-container',
-      'data-slot': 'header-container',
+      'data-slot': DATA_SLOTS.HEADER_CONTAINER,
       role: 'presentation',
-      style: { width: grid.state.rect.headerWidth, height: grid.state.rect.headerHeight },
+      style: { width: grid.getTotalWidth(), height: grid.state.rect.headerHeight },
     }) satisfies ZetaElementAttributes,
   headerGroup: (header: Header) =>
     ({
@@ -72,7 +72,7 @@ const bodyConstructors = {
   body: (grid: ZetaGridInstance) =>
     ({
       className: 'zeta-grid__body zeta-grid-no-scrollbar',
-      'data-slot': 'body',
+      'data-slot': DATA_SLOTS.BODY,
       role: 'presentation',
       style: {
         height: grid.state.rect.bodyHeight,
@@ -83,11 +83,11 @@ const bodyConstructors = {
   bodyContainer: (grid: ZetaGridInstance) =>
     ({
       className: 'zeta-grid__body-container',
-      'data-slot': 'body-container',
+      'data-slot': DATA_SLOTS.BODY_CONTAINER,
       role: 'presentation',
       style: {
+        width: grid.getTotalWidth(),
         height: grid.state.rect.bodyHeight,
-        width: grid.state.rect.bodyWidth,
       },
     }) satisfies ZetaElementAttributes,
 } as const;

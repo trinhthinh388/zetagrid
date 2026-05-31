@@ -44,6 +44,12 @@ export type ZetaGridSrollState = {
   };
 };
 
+export type ZetaGridElements = {
+  root: HTMLDivElement | null;
+  header: HTMLDivElement | null;
+  body: HTMLDivElement | null;
+};
+
 export type ZetaGridState<TData = unknown> = {
   rect: ZetaGridRect;
   scrollState: ZetaGridSrollState;
@@ -52,11 +58,9 @@ export type ZetaGridState<TData = unknown> = {
    */
   isReady: boolean;
   /**
-   * Root element of the Grid
+   * Elements of the Grid
    */
-  readonly root: {
-    element: HTMLElement | null;
-  };
+  readonly elements: ZetaGridElements;
 };
 
 export type ZetaGridInstance<TData = unknown> = {
@@ -67,7 +71,7 @@ export type ZetaGridInstance<TData = unknown> = {
   /**
    * Initialize all registered modules.
    */
-  init: (root?: HTMLElement) => void;
+  init: (root?: HTMLDivElement) => void;
   /**
    * Runs when grid is mounted
    */
@@ -80,6 +84,10 @@ export type ZetaGridInstance<TData = unknown> = {
    * Get header groups.
    */
   getHeaders: () => Header[];
+  /**
+   * Get the total scroll width of the Grid
+   */
+  getTotalWidth: () => number;
   /**
    * Grid's context
    */

@@ -7,7 +7,7 @@ import { useSnapshot } from 'valtio';
 const GridContext = createContext<ZetaGridInstance<any> | undefined>(undefined);
 
 export type GridProviderProps<TData> = PropsWithChildren<CreateZetaGridParams<TData>> & {
-  root: HTMLElement | null;
+  root: HTMLDivElement | null;
 };
 
 export const GridProvider = <TData,>({ children, root, ...params }: GridProviderProps<TData>) => {

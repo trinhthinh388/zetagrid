@@ -1,6 +1,12 @@
-import { ColumnDefinition, GridModule, ZetaGridInstance, ZetaGridState } from '@models';
+import {
+  ColumnDefinition,
+  GridModule,
+  ZetaGridElements,
+  ZetaGridInstance,
+  ZetaGridState,
+} from '@models';
 import { proxy, ref } from 'valtio';
-import { DEFAULT_GRID_SIZE } from '../constants';
+import { DATA_SLOTS, DEFAULT_GRID_SIZE } from '../constants';
 import { createContext } from '../context/context';
 import { createLifeCyclePipe, createLogger } from '../utils';
 import { buildColumnHeader } from '../utils/build-column-header';
@@ -43,7 +49,7 @@ export const createGrid = <TData = unknown>({
         },
       },
     },
-    root: ref<ZetaGridState['root']>({ element: null }),
+    elements: ref<ZetaGridElements>({ root: null, header: null, body: null }),
   });
 
   const use: ZetaGridInstance<TData>['use'] = (...modules) => {
@@ -58,6 +64,14 @@ export const createGrid = <TData = unknown>({
     return instance;
   };
 
+  // #region Internals helpers
+  const getGridElements = (root: HTMLDivElement) => ({
+    header: root.querySelector(`[data-slot="${DATA_SLOTS.HEADER}"]`) as HTMLDivElement,
+    body: root.querySelector(`[data-slot="${DATA_SLOTS.BODY}"]`) as HTMLDivElement,
+  });
+  // #endregion
+
+  // #region APIs
   const getHeaders: ZetaGridInstance<TData>['getHeaders'] = () => {
     const { columnDefs } = ctx;
     const maxDepth = getMaxColumnsDepth<TData>(columnDefs);
@@ -67,8 +81,22 @@ export const createGrid = <TData = unknown>({
     return headers;
   };
 
+  const getTotalWidth: ZetaGridInstance<TData>['getTotalWidth'] = () =>
+    Math.max(state.rect.bodyWidth, state.rect.headerWidth);
+  // #endregion
+
+  // #region Life cycle
   const init: ZetaGridInstance<TData>['init'] = (root) => {
-    if (root) state.root.element = root;
+    if (root) {
+      const { header, body } = getGridElements(root);
+      if (!header || !body) {
+        // TODO: Create ZetaGridError
+        throw new Error('Header or body element not found');
+      }
+      state.elements.root = root;
+      state.elements.header = header;
+      state.elements.body = body;
+    }
     logger.info('Init pipes - Starting');
     pipes.run('init', instance);
     logger.info('Init pipes - Successfully');
@@ -86,6 +114,7 @@ export const createGrid = <TData = unknown>({
     pipes.run('unmount', instance);
     logger.info('Unmount pipes - Successfully');
   };
+  // #endregion
 
   const instance: ZetaGridInstance<TData> = {
     use,
@@ -95,6 +124,7 @@ export const createGrid = <TData = unknown>({
     unmount,
     getHeaders,
     context: ctx,
+    getTotalWidth,
   };
 
   instance.use(...modules);

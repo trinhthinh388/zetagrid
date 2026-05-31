@@ -6,8 +6,8 @@ export const SizeWatcherModule = <TData>() => {
   const logger = createLogger('SizeWatcherModule');
 
   const watchRootSize = (grid: ZetaGridInstance<TData>) => {
-    if (!grid.state.root || !grid.state.root.element) return;
-    const { width, height, borderWidth } = window.getComputedStyle(grid.state.root.element);
+    if (!grid.state.elements.root) return;
+    const { width, height, borderWidth } = window.getComputedStyle(grid.state.elements.root);
     grid.state.rect.containerWidth = pxToNumber(width) - 2 * pxToNumber(borderWidth);
     grid.state.rect.containerHeight = pxToNumber(height) - 2 * pxToNumber(borderWidth);
   };

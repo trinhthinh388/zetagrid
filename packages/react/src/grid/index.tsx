@@ -4,20 +4,21 @@ import { useState } from 'react';
 import { GridBody } from '../body';
 import { GridHeader } from '../header';
 import { GridProvider, useGrid } from '../hooks/use-grid';
+import { Scrollbar } from '../scrollbar/scrollbar';
 
 export type GridProps<TData> = CreateZetaGridParams<TData>;
 
 const InnerGrid = () => {
   const grid = useGrid();
 
-  const isReady = grid.state.isReady;
-
-  if (!isReady) return null;
-
   return (
     <div {...constructElementAttributes.container(grid)}>
       <GridHeader />
+
       <GridBody />
+
+      <Scrollbar orientation="vertical" />
+      <Scrollbar orientation="horizontal" />
     </div>
   );
 };
