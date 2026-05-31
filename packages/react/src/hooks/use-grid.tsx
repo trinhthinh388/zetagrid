@@ -1,16 +1,16 @@
 import { createGrid, type CreateZetaGridParams } from '@core';
-import { ZetaGridInstance, ZetaGridState } from '@models';
+import { RowData, ZetaGridInstance, ZetaGridState } from '@models';
 import { createContext, PropsWithChildren, useContext, useLayoutEffect, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const GridContext = createContext<ZetaGridInstance<any> | undefined>(undefined);
 
-export type GridProviderProps<TData> = PropsWithChildren<CreateZetaGridParams<TData>> & {
+export type GridProviderProps<TData extends RowData> = PropsWithChildren<CreateZetaGridParams<TData>> & {
   root: HTMLDivElement | null;
 };
 
-export const GridProvider = <TData,>({ children, root, ...params }: GridProviderProps<TData>) => {
+export const GridProvider = <TData extends RowData>({ children, root, ...params }: GridProviderProps<TData>) => {
   const [grid] = useState(() => createGrid<TData>(params));
   const state = useSnapshot(grid.state);
 
@@ -31,7 +31,7 @@ export const GridProvider = <TData,>({ children, root, ...params }: GridProvider
   );
 };
 
-export const useGrid = <TData = unknown,>() => {
+export const useGrid = <TData extends RowData = RowData>() => {
   const grid = useContext(GridContext) as ZetaGridInstance<TData>;
 
   if (!grid) {

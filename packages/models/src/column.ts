@@ -1,6 +1,8 @@
-export type ColumnAccessorFn<TData> = (data: TData) => unknown;
+import { RowData } from './data';
 
-export type ColumnDefinition<TData> = {
+export type ColumnAccessorFn<TData extends RowData> = (data: TData) => unknown;
+
+export type ColumnDefinition<TData extends RowData> = {
   /**
    * The resolved unique identifier for the column.
    */

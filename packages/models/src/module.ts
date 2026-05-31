@@ -1,3 +1,4 @@
+import { RowData } from './data';
 import { ZetaGridInstance } from './grid';
 
 export type ZetaElementAttributes = {
@@ -8,7 +9,7 @@ export type ZetaElementAttributes = {
   style?: Record<string, string | number>;
 };
 
-export interface IGridModule<TData = unknown> {
+export interface IGridModule<TData extends RowData = RowData> {
   _name: string;
   init?: (grid: ZetaGridInstance<TData>) => void;
   unmount?: (grid: ZetaGridInstance<TData>) => void;
@@ -16,4 +17,4 @@ export interface IGridModule<TData = unknown> {
   update?: (grid: ZetaGridInstance<TData>) => void;
 }
 
-export type GridModule<TData = unknown> = () => IGridModule<TData>;
+export type GridModule<TData extends RowData = RowData> = () => IGridModule<TData>;

@@ -1,7 +1,7 @@
-import { ColumnDefinition, Header } from '@models';
+import { ColumnDefinition, Header, RowData } from '@models';
 import { DEFAULT_CELL_HEIGHT, DEFAULT_CELL_WIDTH } from '../constants';
 
-export const buildColumnHeader = <TData>({
+export const buildColumnHeader = <TData extends RowData>({
   columnDef,
   currentDepth,
   maxDepth,

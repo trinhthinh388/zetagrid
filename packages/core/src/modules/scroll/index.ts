@@ -1,8 +1,8 @@
-import { IGridModule, ZetaGridInstance } from '@models';
+import { IGridModule, RowData, ZetaGridInstance } from '@models';
 import { MIN_SCROLLBAR_THUMB_SIZE } from '../../constants';
 import { createLogger } from '../../utils';
 
-export const ScrollModule = <TData>() => {
+export const ScrollModule = <TData extends RowData = RowData>() => {
   const logger = createLogger('ScrollModule');
 
   const cleanups: VoidFunction[] = [];

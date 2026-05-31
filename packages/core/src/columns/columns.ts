@@ -1,10 +1,10 @@
-import { ColumnDefinition } from '@models';
+import { ColumnDefinition, RowData } from '@models';
 import { idGenerator } from '../utils/generate-id';
 
-export type CreateColumnArgs<TData> = Partial<Omit<ColumnDefinition<TData>, 'title' | 'accessor'>> &
+export type CreateColumnArgs<TData extends RowData> = Partial<Omit<ColumnDefinition<TData>, 'title' | 'accessor'>> &
   Pick<ColumnDefinition<TData>, 'title' | 'accessor'>;
 
-export const createColumn = <TData>({
+export const createColumn = <TData extends RowData>({
   id = idGenerator.column(),
   width = 200,
   ...args

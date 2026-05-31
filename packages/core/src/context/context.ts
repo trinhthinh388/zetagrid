@@ -1,6 +1,6 @@
-import { ZetaGridContext } from '@models';
+import { RowData, ZetaGridContext } from '@models';
 
-export const createContext = <TData>({
+export const createContext = <TData extends RowData>({
   modules = [],
   columnDefs = [],
   ...initial

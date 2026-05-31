@@ -1,4 +1,5 @@
 import { ZetaGridContext } from './context';
+import { RowData } from './data';
 import { Header } from './header';
 import { GridModule } from './module';
 
@@ -50,7 +51,7 @@ export type ZetaGridElements = {
   body: HTMLDivElement | null;
 };
 
-export type ZetaGridState<TData = unknown> = {
+export type ZetaGridState<TData extends RowData = RowData> = {
   rect: ZetaGridRect;
   scrollState: ZetaGridSrollState;
   /**
@@ -63,7 +64,7 @@ export type ZetaGridState<TData = unknown> = {
   readonly elements: ZetaGridElements;
 };
 
-export type ZetaGridInstance<TData = unknown> = {
+export type ZetaGridInstance<TData extends RowData = RowData> = {
   /**
    * Register ZetaGrid's modules to extends the functionality.
    */

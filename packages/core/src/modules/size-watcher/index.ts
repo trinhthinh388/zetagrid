@@ -1,8 +1,8 @@
-import { IGridModule, ZetaGridInstance } from '@models';
+import { IGridModule, RowData, ZetaGridInstance } from '@models';
 import { createLogger } from '../../utils';
 import { pxToNumber } from '../../utils/px-to-number';
 
-export const SizeWatcherModule = <TData>() => {
+export const SizeWatcherModule = <TData extends RowData = RowData>() => {
   const logger = createLogger('SizeWatcherModule');
 
   const watchRootSize = (grid: ZetaGridInstance<TData>) => {

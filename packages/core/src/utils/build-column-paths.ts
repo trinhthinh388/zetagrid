@@ -1,12 +1,12 @@
-import { ColumnDefinition } from '@models';
+import { ColumnDefinition, RowData } from '@models';
 
-export type BuildColumnsPathsParams<TData> = {
+export type BuildColumnsPathsParams<TData extends RowData> = {
   maxDepth: number;
   columnDefs: ColumnDefinition<TData>[];
   currentDepth?: number;
 };
 
-export type ColumnPathNode<TData> = {
+export type ColumnPathNode<TData extends RowData> = {
   column: ColumnDefinition<TData>;
   /**
    * Placeholder node
@@ -15,7 +15,7 @@ export type ColumnPathNode<TData> = {
   isPlaceholder: boolean;
 };
 
-export const buildColumnsPaths = <TData>({
+export const buildColumnsPaths = <TData extends RowData>({
   columnDefs,
   maxDepth,
   currentDepth = 0,

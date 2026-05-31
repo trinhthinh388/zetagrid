@@ -1,6 +1,7 @@
 import {
   ColumnDefinition,
   GridModule,
+  RowData,
   ZetaGridElements,
   ZetaGridInstance,
   ZetaGridState,
@@ -12,12 +13,13 @@ import { createLifeCyclePipe, createLogger } from '../utils';
 import { buildColumnHeader } from '../utils/build-column-header';
 import { getMaxColumnsDepth } from '../utils/get-max-columns-depth';
 
-export type CreateZetaGridParams<TData> = {
+export type CreateZetaGridParams<TData extends RowData> = {
   columnDefs: ColumnDefinition<TData>[];
   modules?: GridModule<TData>[];
+  data: TData[];
 };
 
-export const createGrid = <TData = unknown>({
+export const createGrid = <TData extends RowData = RowData>({
   columnDefs,
   modules = [],
 }: CreateZetaGridParams<TData>): ZetaGridInstance<TData> => {

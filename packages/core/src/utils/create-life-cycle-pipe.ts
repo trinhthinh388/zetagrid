@@ -1,8 +1,8 @@
-import { ZetaGridInstance, ZetaGridLifeCycle } from '@models';
+import { RowData, ZetaGridInstance, ZetaGridLifeCycle } from '@models';
 
-export type LifeCyclePipeCallback<TData> = (grid: ZetaGridInstance<TData>) => void;
+export type LifeCyclePipeCallback<TData extends RowData> = (grid: ZetaGridInstance<TData>) => void;
 
-export const createLifeCyclePipe = <TData>() => {
+export const createLifeCyclePipe = <TData extends RowData>() => {
   const pipes: Map<ZetaGridLifeCycle, Set<LifeCyclePipeCallback<TData>>> = new Map<
     ZetaGridLifeCycle,
     Set<LifeCyclePipeCallback<TData>>

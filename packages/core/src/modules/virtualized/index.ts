@@ -1,7 +1,7 @@
-import { IGridModule, ZetaGridInstance } from '@models';
+import { IGridModule, RowData, ZetaGridInstance } from '@models';
 import { createLogger } from '../../utils';
 
-export const VirtualizedModule = <TData>() => {
+export const VirtualizedModule = <TData extends RowData = RowData>() => {
   const logger = createLogger('VirtualizedModule');
 
   return {
