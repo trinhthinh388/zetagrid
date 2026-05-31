@@ -88,11 +88,33 @@ export const ScrollModule = <TData>() => {
     cleanups.push(() => root.removeEventListener('scroll', onScroll));
   };
 
+  const trackScrollbarScroll = (grid: ZetaGridInstance<TData>) => {
+    const { root, body } = grid.state.elements;
+    if (root && body) {
+      const onWheel = (e: WheelEvent) => {
+        const target = e.target as HTMLElement;
+        const track = target.closest('[data-slot="scrollbar-track"]') as HTMLElement;
+        if (track) {
+          const isHorizontal = track.classList.contains('zeta-grid__scrollbar-track--horizontal');
+          if (isHorizontal) {
+            body.scrollLeft += e.deltaX || e.deltaY;
+          } else {
+            body.scrollTop += e.deltaY;
+          }
+          e.preventDefault();
+        }
+      };
+      root.addEventListener('wheel', onWheel, { passive: false });
+      cleanups.push(() => root.removeEventListener('wheel', onWheel));
+    }
+  };
+
   return {
     _name: 'Scroll',
     mount: (grid: ZetaGridInstance<TData>) => {
       updateScrollbar(grid);
       trackScrollPosition(grid);
+      trackScrollbarScroll(grid);
     },
     unmount: () => {
       cleanups.forEach((cleanup) => cleanup());

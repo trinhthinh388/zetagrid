@@ -85,17 +85,15 @@ export const Scrollbar = ({ orientation }: { orientation: 'vertical' | 'horizont
     }
   };
 
-  if (size === 0) return null;
-
   return (
     <div
-      {...constructElementAttributes.scrollbarTrack(grid, orientation)}
       ref={trackRef}
       onMouseDown={handleTrackClick}
+      {...constructElementAttributes.scrollbarTrack(grid, orientation)}
     >
       <div
-        {...constructElementAttributes.scrollbarThumb(grid, orientation)}
         onMouseDown={handleMouseDown}
+        {...constructElementAttributes.scrollbarThumb(grid, orientation)}
       />
     </div>
   );

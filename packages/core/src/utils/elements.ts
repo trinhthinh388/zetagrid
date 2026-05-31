@@ -99,6 +99,7 @@ const scrollbarConstructors = {
       'aria-orientation': orientation,
       'data-slot': DATA_SLOTS.SCROLLBAR_TRACK,
       role: 'scrollbar',
+      style: { display: grid.state.scrollState.thumb[orientation].size ? 'block' : 'none' },
     }) satisfies ZetaElementAttributes,
   scrollbarThumb: (grid: ZetaGridInstance, orientation: 'horizontal' | 'vertical') =>
     ({
