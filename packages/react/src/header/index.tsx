@@ -8,6 +8,8 @@ export type GridHeaderProps = PropsWithChildren;
 export const GridHeader = (props: GridHeaderProps) => {
   const grid = useGrid();
 
+  grid.api.getVisibleHeaders();
+
   const render = useCallback((header: Header) => {
     if (header.isGroup) {
       return (

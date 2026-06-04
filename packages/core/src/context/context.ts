@@ -1,10 +1,13 @@
-import { RowData, ZetaGridContext } from '@models';
+import { GridContext, RowData } from '@models';
+import { ScrollModule } from '../modules/scroll';
+import { SizeWatcherModule } from '../modules/size-watcher';
+import { VirtualizedModule } from '../modules/virtualized';
 
 export const createContext = <TData extends RowData>({
-  modules = [],
+  modules = [ScrollModule(), SizeWatcherModule(), VirtualizedModule()],
   columnDefs = [],
   ...initial
-}: Partial<ZetaGridContext<TData>> = {}): ZetaGridContext<TData> => {
+}: Partial<GridContext<TData>> = {}): GridContext<TData> => {
   return {
     ...initial,
     modules,

@@ -1,9 +1,8 @@
-import { ZetaGridContext } from './context';
+import { GridContext } from './context';
 import { RowData } from './data';
-import { Header } from './header';
 import { GridModule } from './module';
 
-export type ZetaGridRect = {
+export type GridRect = {
   /**
    * Rendered Grid's width - in `px`
    * @default 500
@@ -32,7 +31,7 @@ export type ZetaGridRect = {
   bodyHeight: number;
 };
 
-export type ZetaGridSrollState = {
+export type GridSrollState = {
   thumb: {
     horizontal: {
       size: number;
@@ -45,15 +44,15 @@ export type ZetaGridSrollState = {
   };
 };
 
-export type ZetaGridElements = {
+export type GridElements = {
   root: HTMLDivElement | null;
   header: HTMLDivElement | null;
   body: HTMLDivElement | null;
 };
 
-export type ZetaGridState<TData extends RowData = RowData> = {
-  rect: ZetaGridRect;
-  scrollState: ZetaGridSrollState;
+export type GridState<TData extends RowData = RowData> = {
+  rect: GridRect;
+  scrollState: GridSrollState;
   /**
    * Flag to check if the grid is ready to render.
    */
@@ -61,14 +60,12 @@ export type ZetaGridState<TData extends RowData = RowData> = {
   /**
    * Elements of the Grid
    */
-  readonly elements: ZetaGridElements;
+  readonly elements: GridElements;
 };
 
-export type ZetaGridInstance<TData extends RowData = RowData> = {
-  /**
-   * Register ZetaGrid's modules to extends the functionality.
-   */
-  use: (...modules: GridModule<TData>[]) => ZetaGridInstance<TData>;
+export type GridLifeCycle = 'init' | 'mount' | 'update' | 'unmount';
+
+export interface GridApi<TData extends RowData = RowData> {
   /**
    * Initialize all registered modules.
    */
@@ -82,10 +79,6 @@ export type ZetaGridInstance<TData extends RowData = RowData> = {
    */
   unmount: () => void;
   /**
-   * Get header groups.
-   */
-  getHeaders: () => Header[];
-  /**
    *
    * Get the total scroll width of the Grid
    */
@@ -94,11 +87,23 @@ export type ZetaGridInstance<TData extends RowData = RowData> = {
    * Get the total scroll height of the Grid
    */
   getTotalHeight: () => number;
+}
+
+export interface GridInstance<TData extends RowData = RowData> {
   /**
    * Grid's context
    */
-  context: ZetaGridContext<TData>;
-  state: ZetaGridState<TData>;
-};
-
-export type ZetaGridLifeCycle = 'init' | 'mount' | 'update' | 'unmount';
+  context: GridContext<TData>;
+  /**
+   * Grid's state
+   */
+  state: GridState<TData>;
+  /**
+   * Grid's APIs
+   */
+  api: GridApi<TData>;
+  /**
+   * Register ZetaGrid's modules to extends the functionality.
+   */
+  use: (...modules: GridModule<TData>[]) => GridInstance<TData>;
+}

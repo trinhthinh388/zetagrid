@@ -1,35 +1,24 @@
-import {
-  ColumnDefinition,
-  GridModule,
-  RowData,
-  ZetaGridElements,
-  ZetaGridInstance,
-  ZetaGridState,
-} from '@models';
+import { ColumnDefinition, GridApi, GridElements, GridInstance, GridState, RowData } from '@models';
 import { proxy, ref } from 'valtio';
 import { DATA_SLOTS, DEFAULT_GRID_SIZE } from '../constants';
 import { createContext } from '../context/context';
 import { createLifeCyclePipe, createLogger } from '../utils';
-import { buildColumnHeader } from '../utils/build-column-header';
-import { getMaxColumnsDepth } from '../utils/get-max-columns-depth';
 
 export type CreateZetaGridParams<TData extends RowData> = {
   columnDefs: ColumnDefinition<TData>[];
-  modules?: GridModule<TData>[];
   data: TData[];
 };
 
 export const createGrid = <TData extends RowData = RowData>({
   columnDefs,
-  modules = [],
-}: CreateZetaGridParams<TData>): ZetaGridInstance<TData> => {
+}: CreateZetaGridParams<TData>): GridInstance<TData> => {
   const logger = createLogger('Grid');
   const pipes = createLifeCyclePipe<TData>();
-  const ctx = createContext<TData>({
+  const context = createContext<TData>({
     columnDefs,
   });
 
-  const state = proxy<ZetaGridState<TData>>({
+  const state = proxy<GridState<TData>>({
     isReady: false,
     rect: {
       containerWidth: DEFAULT_GRID_SIZE,
@@ -51,20 +40,8 @@ export const createGrid = <TData extends RowData = RowData>({
         },
       },
     },
-    elements: ref<ZetaGridElements>({ root: null, header: null, body: null }),
+    elements: ref<GridElements>({ root: null, header: null, body: null }),
   });
-
-  const use: ZetaGridInstance<TData>['use'] = (...modules) => {
-    for (const module of modules) {
-      const instance = module();
-      ctx.modules.push(instance);
-      if (instance.init) pipes.register('init', instance.init);
-      if (instance.mount) pipes.register('mount', instance.mount);
-      if (instance.update) pipes.register('update', instance.update);
-      if (instance.unmount) pipes.register('unmount', instance.unmount);
-    }
-    return instance;
-  };
 
   // #region Internals helpers
   const getGridElements = (root: HTMLDivElement) => ({
@@ -74,24 +51,19 @@ export const createGrid = <TData extends RowData = RowData>({
   // #endregion
 
   // #region APIs
-  const getHeaders: ZetaGridInstance<TData>['getHeaders'] = () => {
-    const { columnDefs } = ctx;
-    const maxDepth = getMaxColumnsDepth<TData>(columnDefs);
-    const headers = columnDefs.map((columnDef) =>
-      buildColumnHeader({ columnDef, currentDepth: 0, maxDepth }),
-    );
-    return headers;
-  };
-
-  const getTotalWidth: ZetaGridInstance<TData>['getTotalWidth'] = () =>
+  const getTotalWidth: GridApi<TData>['getTotalWidth'] = () =>
     Math.max(state.rect.bodyWidth, state.rect.headerWidth, state.rect.containerWidth);
 
-  const getTotalHeight: ZetaGridInstance<TData>['getTotalHeight'] = () =>
+  const getTotalHeight: GridApi<TData>['getTotalHeight'] = () =>
     Math.max(state.rect.bodyHeight + state.rect.headerHeight, state.rect.containerHeight);
-  // #endregion
-
-  // #region Life cycle
-  const init: ZetaGridInstance<TData>['init'] = (root) => {
+  const use: GridInstance<TData>['use'] = (...modules) => {
+    for (const module of modules) {
+      const instance = module();
+      context.modules.push(instance);
+    }
+    return instance;
+  };
+  const init: GridApi<TData>['init'] = (root) => {
     if (root) {
       const { header, body } = getGridElements(root);
       if (!header || !body) {
@@ -107,33 +79,32 @@ export const createGrid = <TData extends RowData = RowData>({
     logger.info('Init pipes - Successfully');
   };
 
-  const mount: ZetaGridInstance<TData>['mount'] = () => {
+  const mount: GridApi<TData>['mount'] = () => {
     logger.info('Mount pipes - Starting');
     pipes.run('mount', instance);
     logger.info('Mount pipes - Successfully');
     state.isReady = true;
   };
 
-  const unmount: ZetaGridInstance<TData>['unmount'] = () => {
+  const unmount: GridApi<TData>['unmount'] = () => {
     logger.info('Unmount pipes - Starting');
     pipes.run('unmount', instance);
     logger.info('Unmount pipes - Successfully');
   };
   // #endregion
 
-  const instance: ZetaGridInstance<TData> = {
+  const instance: GridInstance<TData> = {
     use,
-    init,
+    context,
     state,
-    mount,
-    unmount,
-    getHeaders,
-    context: ctx,
-    getTotalWidth,
-    getTotalHeight,
+    api: {
+      init,
+      mount,
+      unmount,
+      getTotalHeight,
+      getTotalWidth,
+    } as unknown as GridApi<TData>,
   };
-
-  instance.use(...modules);
 
   return instance;
 };
