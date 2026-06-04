@@ -1,4 +1,6 @@
 import nx from '@nx/eslint-plugin';
+import perfectionist from 'eslint-plugin-perfectionist';
+import prettierPlugin from 'eslint-plugin-prettier/recommended';
 
 export default [
   ...nx.configs['flat/base'],
@@ -27,6 +29,9 @@ export default [
     },
   },
   {
+    plugins: {
+      perfectionist,
+    },
     files: [
       '**/*.ts',
       '**/*.tsx',
@@ -38,6 +43,36 @@ export default [
       '**/*.mjs',
     ],
     // Override or add rules here
-    rules: {},
+    rules: {
+      'perfectionist/sort-objects': [
+        'error',
+        {
+          order: 'asc',
+          type: 'line-length',
+        },
+      ],
+      'perfectionist/sort-classes': [
+        'error',
+        {
+          order: 'asc',
+          type: 'line-length',
+        },
+      ],
+      'perfectionist/sort-interfaces': [
+        'error',
+        {
+          order: 'asc',
+          type: 'line-length',
+        },
+      ],
+      'perfectionist/sort-object-types': [
+        'error',
+        {
+          order: 'asc',
+          type: 'line-length',
+        },
+      ],
+    },
   },
+  prettierPlugin,
 ];

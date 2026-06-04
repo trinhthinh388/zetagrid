@@ -1,1 +1,1 @@
-export const pxToNumber = (value: string) => parseFloat(value.replace('px', ''));
+export const pxToNumber = (px: string) => parseFloat(px.replace('px', ''));
