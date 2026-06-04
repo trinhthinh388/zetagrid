@@ -1,5 +1,5 @@
 import { RowData } from '.';
-import { CellRenderer } from '../cell/type';
+import { CellRenderer } from '../cell/types';
 
 export type ColumnDefinition<TData extends RowData = RowData> = {
   id: string;

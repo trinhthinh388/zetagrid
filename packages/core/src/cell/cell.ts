@@ -1,7 +1,7 @@
 import { RowData } from '../types';
 import { ComputedRect } from '../types/rect';
 import { getComputedRect } from '../utils/get-computed-rect';
-import { CellRenderer, ICell } from './type';
+import { CellRenderer, ICell } from './types';
 
 export type CellContructorParams<TData extends RowData = RowData> = {
   data: TData;
