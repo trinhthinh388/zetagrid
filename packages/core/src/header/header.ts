@@ -31,6 +31,7 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
   }
 
   destroy(): void {
+    this.rowsMap.clear();
     this.rows.forEach((row) => row.destroy());
   }
 
@@ -45,9 +46,11 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
 
   init(): void {
     this.#maxDepth = this.#getMaxColumnDefinitionDepth();
-    this.rows = Array.from({ length: this.#maxDepth }).map(
-      () => new HeaderRow<TData>({ grid: this.grid }),
-    );
+    this.rows = Array.from({ length: this.#maxDepth }).map(() => {
+      const row = new HeaderRow<TData>({ grid: this.grid });
+      this.rowsMap.set(row.rowId, row);
+      return row;
+    });
     this.rows.forEach((row) => row.init());
     this.state.init = true;
   }

@@ -15,10 +15,10 @@ export class HeaderRow<TData extends RowData = RowData> extends Row<TData> {
     this.state.init = true;
   }
 
-  override ref(el: HTMLDivElement | null): void {
+  override ref = (el: HTMLDivElement | null): void => {
     this.dom = el;
     if (!this.state.init) this.init();
-  }
+  };
 
   override getElementAttributes(): ElementAttributes {
     return {
