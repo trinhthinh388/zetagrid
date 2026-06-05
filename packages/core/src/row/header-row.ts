@@ -1,32 +1,31 @@
-import { ColumnDefinition, RowData } from '../types';
+import { proxy } from 'valtio';
+import { ElementAttributes, RowData } from '../types';
 import { Row } from './row';
-import { RowType } from './types';
-import { VirtualizedRow } from './virtualized-row';
+import { RowState, RowType } from './types';
+
+type HeaderRowState = {} & RowState;
 
 export class HeaderRow<TData extends RowData = RowData> extends Row<TData> {
-  maxDepth = 0;
   override type: RowType = 'header';
-  virtulizedRows: VirtualizedRow<TData>[] = [];
+  state: HeaderRowState = proxy({
+    init: false,
+  });
 
   override init(): void {
-    this.maxDepth = this.#getMaxColumnDefinitionDepth();
-    this.virtulizedRows = Array.from({ length: this.maxDepth }).map(
-      () =>
-        new VirtualizedRow({
-          grid: this.grid,
-          columnDefinitions: this.columnDefinitions,
-        }),
-    );
+    this.state.init = true;
   }
 
-  #getMaxColumnDefinitionDepth(): number {
-    const dfs = (columnDefinition?: ColumnDefinition<TData>): number => {
-      if (!columnDefinition) return 0;
-      return columnDefinition.children.reduce(
-        (max, def: ColumnDefinition<TData> | undefined) => Math.max(max, dfs(def) + 1),
-        1,
-      );
+  override ref(el: HTMLDivElement | null): void {
+    this.dom = el;
+    if (!this.state.init) this.init();
+  }
+
+  override getElementAttributes(): ElementAttributes {
+    return {
+      role: 'presentation',
+      'data-slot': 'header-row',
+      'data-row-id': this.rowId,
+      className: 'zeta-grid__header-row',
     };
-    return this.columnDefinitions.reduce((max, def) => Math.max(max, dfs(def)), 0);
   }
 }

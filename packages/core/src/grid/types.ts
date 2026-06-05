@@ -1,12 +1,13 @@
-import { HeaderRow } from '../row/header-row';
-import { ElementAttributes, RowData } from '../types';
+import { Header } from '../header/header';
+import { ColumnDefinition, ElementAttributes, RowData } from '../types';
 
 export interface IGrid<TData extends RowData = RowData> {
   init(): void;
   destroy(): void;
-  getHeaders(): HeaderRow<TData>[];
+  getHeader(): Header<TData>;
   ref(element: HTMLDivElement | null): void;
   getElementAttributes(): ElementAttributes;
+  getColumnDefinitions(): ColumnDefinition<TData>[];
 }
 
 export type GridObservers = {

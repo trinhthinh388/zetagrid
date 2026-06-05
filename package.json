@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "nx": "nx",
+    "dev": "nx run playground:storybook",
     "storybook": "nx run-many -t storybook",
     "format": "prettier . --write"
   },

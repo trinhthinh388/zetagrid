@@ -74,4 +74,5 @@ export type ElementAttributes = {
   role: AriaRole;
   className: string;
   'data-slot': string;
+  [key: string]: string | number;
 };

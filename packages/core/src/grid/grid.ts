@@ -1,6 +1,5 @@
 import { proxy } from 'valtio';
-import { HeaderRow } from '../row/header-row';
-import { Row } from '../row/row';
+import { Header } from '../header/header';
 import { ComputedRect, ElementAttributes, RowData } from '../types';
 import { ColumnDefinition } from '../types/columns';
 import { getComputedRect } from '../utils/get-computed-rect';
@@ -13,8 +12,8 @@ export type GridConstructorParams<TData extends RowData = RowData> = {
 
 export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
   data: TData[];
-  rows: Row<TData>[];
   rect: ComputedRect;
+  header: Header<TData>;
   root: HTMLElement | null;
   observers: GridObservers;
   columnDefinitions: ColumnDefinition<TData>[];
@@ -31,20 +30,26 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
       height: 0,
     };
     this.root = null;
-    this.rows = [];
     this.data = data;
+    this.header = new Header<TData>({
+      grid: this,
+    });
     this.columnDefinitions = columnDefinitions;
     this.observers = {
       resize: this.#createResizeObserver(),
     };
   }
 
+  getHeader(): Header<TData> {
+    return this.header;
+  }
+
   destroy(): void {
     this.observers.resize.disconnect();
   }
 
-  getHeaders(): HeaderRow<TData>[] {
-    return this.rows.filter((row) => row instanceof HeaderRow);
+  getColumnDefinitions(): ColumnDefinition<TData>[] {
+    return this.columnDefinitions;
   }
 
   ref(element: HTMLDivElement | null): void {
@@ -55,7 +60,7 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
   init(): void {
     if (!this.root) return;
     this.#initGrid();
-    this.#initRows();
+    this.#initHeader();
     this.state.init = true;
   }
 
@@ -67,6 +72,10 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
     };
   }
 
+  #initHeader() {
+    this.header.init();
+  }
+
   #createResizeObserver(): ResizeObserver {
     const callback = () => void 0;
     return new ResizeObserver(callback);
@@ -76,10 +85,5 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
     if (!this.root) return;
     this.rect = getComputedRect(this.root as HTMLDivElement);
     this.observers.resize.observe(this.root);
-  }
-
-  #initRows() {
-    this.rows = [new HeaderRow<TData>({ grid: this, columnDefinitions: this.columnDefinitions })];
-    this.rows.forEach((row) => row.init());
   }
 }
