@@ -1,5 +1,6 @@
 import nx from '@nx/eslint-plugin';
 import perfectionist from 'eslint-plugin-perfectionist';
+import preferArrowFunctions from 'eslint-plugin-prefer-arrow-functions';
 import prettierPlugin from 'eslint-plugin-prettier/recommended';
 
 export default [
@@ -13,6 +14,7 @@ export default [
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
       '@typescript-eslint/no-namespace': 'off',
+      '@typescript-eslint/method-signature-style': ['warn', 'property'],
       '@nx/enforce-module-boundaries': [
         'error',
         {
@@ -31,6 +33,7 @@ export default [
   {
     plugins: {
       perfectionist,
+      'prefer-arrow-functions': preferArrowFunctions,
     },
     files: [
       '**/*.ts',
@@ -70,6 +73,13 @@ export default [
         {
           order: 'asc',
           type: 'line-length',
+        },
+      ],
+      'prefer-arrow-functions/prefer-arrow-functions': [
+        'warn',
+        {
+          disallowPrototype: true,
+          classPropertiesAllowed: true,
         },
       ],
     },

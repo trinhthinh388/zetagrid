@@ -148,71 +148,10 @@ export const columnDefs: ColumnDefinition[] = [
     ],
   },
   {
-    id: 'addressGroup',
+    children: [],
+    id: 'Address',
     renderer: () => null,
     title: 'Address details',
-    children: [
-      {
-        children: [],
-        id: 'homeStreet',
-        title: 'Home Street',
-        renderer: (data) => data.homeStreet,
-      },
-      {
-        children: [],
-        id: 'homeCity',
-        title: 'Home City',
-        renderer: (data) => data.homeCity,
-      },
-      {
-        children: [],
-        id: 'homeState',
-        title: 'Home State',
-        renderer: (data) => data.homeState,
-      },
-      {
-        children: [],
-        id: 'homeZip',
-        title: 'Home Zip',
-        renderer: (data) => data.homeZip,
-      },
-      {
-        children: [],
-        id: 'homeCountry',
-        title: 'Home Country',
-        renderer: (data) => data.homeCountry,
-      },
-      {
-        children: [],
-        id: 'workStreet',
-        title: 'Work Street',
-        renderer: (data) => data.workStreet,
-      },
-      {
-        children: [],
-        id: 'workCity',
-        title: 'Work City',
-        renderer: (data) => data.workCity,
-      },
-      {
-        children: [],
-        id: 'workState',
-        title: 'Work State',
-        renderer: (data) => data.workState,
-      },
-      {
-        children: [],
-        id: 'workZip',
-        title: 'Work Zip',
-        renderer: (data) => data.workZip,
-      },
-      {
-        children: [],
-        id: 'workCountry',
-        title: 'Work Country',
-        renderer: (data) => data.workCountry,
-      },
-    ],
   },
   {
     renderer: () => null,

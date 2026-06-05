@@ -12,6 +12,7 @@ export class HeaderRow<TData extends RowData = RowData> extends Row<TData> {
   });
 
   override init = (): void => {
+    this.cells.forEach((cell) => cell.init());
     this.state.init = true;
   };
 

@@ -1,3 +1,4 @@
+import { Cell } from '../cell/cell';
 import { Grid } from '../grid/grid';
 import { ElementAttributes, RowData } from '../types';
 import { generateId } from '../utils/generate-id';
@@ -11,10 +12,12 @@ export abstract class Row<TData extends RowData = RowData> implements IRow<TData
   rowId: string;
   type: RowType;
   grid: Grid<TData>;
+  cells: Cell<TData>[];
   dom: HTMLDivElement | null;
 
   constructor({ grid }: RowContructorParams<TData>) {
     this.dom = null;
+    this.cells = [];
     this.grid = grid;
     this.type = 'body';
     this.rowId = `row:${generateId()}`;

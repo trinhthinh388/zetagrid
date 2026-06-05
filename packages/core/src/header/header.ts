@@ -1,4 +1,5 @@
 import { proxy } from 'valtio';
+import { Cell } from '../cell/cell';
 import { Grid } from '../grid/grid';
 import { HeaderRow } from '../row/header-row';
 import { ColumnDefinition, ElementAttributes, RowData } from '../types';
@@ -46,11 +47,9 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
 
   init = (): void => {
     this.#maxDepth = this.#getMaxColumnDefinitionDepth();
-    this.rows = Array.from({ length: this.#maxDepth }).map(() => {
-      const row = new HeaderRow<TData>({ grid: this.grid });
-      this.rowsMap.set(row.rowId, row);
-      return row;
-    });
+    this.#initRows();
+    this.#initCells();
+
     this.rows.forEach((row) => row.init());
     this.state.init = true;
   };
@@ -71,6 +70,14 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
     };
   };
 
+  #initRows() {
+    this.rows = Array.from({ length: this.#maxDepth }).map(() => {
+      const row = new HeaderRow<TData>({ grid: this.grid });
+      this.rowsMap.set(row.rowId, row);
+      return row;
+    });
+  }
+
   #getMaxColumnDefinitionDepth(): number {
     const dfs = (columnDefinition?: ColumnDefinition<TData>): number => {
       if (!columnDefinition) return 0;
@@ -80,5 +87,29 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
       );
     };
     return this.grid.getColumnDefinitions().reduce((max, def) => Math.max(max, dfs(def)), 0);
+  }
+
+  #initCells() {
+    const columnDefinitions = this.grid.getColumnDefinitions();
+
+    const distributeCell = (
+      columnDefinition: ColumnDefinition<TData>,
+      colIndex: number,
+      depth = 0,
+    ) => {
+      const row = this.rows[depth];
+      if (!row) return;
+      const rowSpan = Math.max(columnDefinition.children.length, 1);
+      const colSpan = depth === 0 && !rowSpan ? this.#maxDepth : 1;
+      row.cells.push(new Cell({ rowSpan, colSpan, colIndex, rowIndex: depth, grid: this.grid }));
+
+      columnDefinition.children.forEach((columnDefinition, index) =>
+        distributeCell(columnDefinition, index, depth + 1),
+      );
+    };
+
+    columnDefinitions.forEach((columnDefinition, index) =>
+      distributeCell(columnDefinition, index, 0),
+    );
   }
 }

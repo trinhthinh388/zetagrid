@@ -1,38 +1,51 @@
+import { proxy } from 'valtio';
+import { Grid } from '../grid/grid';
 import { RowData } from '../types';
 import { ComputedRect } from '../types/rect';
 import { getComputedRect } from '../utils/get-computed-rect';
-import { CellRenderer, ICell } from './types';
+import { CellState, ICell } from './types';
 
 export type CellContructorParams<TData extends RowData = RowData> = {
-  data: TData;
+  rowSpan: number;
+  colSpan: number;
   rowIndex: number;
   colIndex: number;
-  renderer: CellRenderer<TData>;
+  grid: Grid<TData>;
 };
 
 export class Cell<TData extends RowData = RowData> implements ICell<TData> {
-  data: TData;
+  colSpan: number;
+  rowSpan: number;
   colIndex: number;
   rowIndex: number;
+  grid: Grid<TData>;
   dom: HTMLDivElement;
-  renderer: CellRenderer<TData>;
-  rect: ComputedRect = {
+
+  state: CellState<TData> = proxy({
+    init: false,
+  });
+  rect: ComputedRect = proxy({
     x: 0,
     y: 0,
     width: 0,
     height: 0,
-  };
+  });
 
-  constructor({ data, rowIndex, colIndex, renderer }: CellContructorParams<TData>) {
-    this.data = data;
+  constructor({ grid, rowSpan, colSpan, rowIndex, colIndex }: CellContructorParams<TData>) {
+    this.grid = grid;
+    this.colSpan = colSpan;
+    this.rowSpan = rowSpan;
     this.colIndex = colIndex;
     this.rowIndex = rowIndex;
-    this.renderer = renderer;
     this.dom = window.document.createElement('div');
   }
 
-  render = (): unknown => {
-    return this.renderer(this.data, this);
+  destroy = (): void => {};
+
+  render = (): unknown => {};
+
+  init = (): void => {
+    this.state.init = true;
   };
 
   measure = (): ComputedRect => {
