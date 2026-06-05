@@ -11,21 +11,21 @@ export class HeaderRow<TData extends RowData = RowData> extends Row<TData> {
     init: false,
   });
 
-  override init(): void {
+  override init = (): void => {
     this.state.init = true;
-  }
+  };
 
   override ref = (el: HTMLDivElement | null): void => {
     this.dom = el;
     if (!this.state.init) this.init();
   };
 
-  override getElementAttributes(): ElementAttributes {
+  override getElementAttributes = (): ElementAttributes => {
     return {
       role: 'presentation',
       'data-slot': 'header-row',
       'data-row-id': this.rowId,
       className: 'zeta-grid__header-row',
     };
-  }
+  };
 }

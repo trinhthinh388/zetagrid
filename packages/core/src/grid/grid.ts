@@ -40,37 +40,37 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
     };
   }
 
-  getHeader(): Header<TData> {
+  getHeader = (): Header<TData> => {
     return this.header;
-  }
+  };
 
-  destroy(): void {
+  destroy = (): void => {
     this.observers.resize.disconnect();
-  }
+  };
 
-  getColumnDefinitions(): ColumnDefinition<TData>[] {
+  getColumnDefinitions = (): ColumnDefinition<TData>[] => {
     return this.columnDefinitions;
-  }
+  };
 
-  ref(element: HTMLDivElement | null): void {
+  ref = (element: HTMLDivElement | null): void => {
     this.root = element;
     if (!this.state.init) this.init();
-  }
+  };
 
-  init(): void {
+  init = (): void => {
     if (!this.root) return;
     this.#initGrid();
     this.#initHeader();
     this.state.init = true;
-  }
+  };
 
-  getElementAttributes(): ElementAttributes {
+  getElementAttributes = (): ElementAttributes => {
     return {
       role: 'grid',
       'data-slot': 'grid',
       className: 'zeta-grid__root',
     };
-  }
+  };
 
   #initHeader() {
     this.header.init();

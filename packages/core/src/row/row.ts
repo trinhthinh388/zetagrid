@@ -20,23 +20,23 @@ export abstract class Row<TData extends RowData = RowData> implements IRow<TData
     this.rowId = `row:${generateId()}`;
   }
 
-  init(): void {
+  init = (): void => {
     return void 0;
-  }
+  };
 
-  destroy(): void {
+  destroy = (): void => {
     return void 0;
-  }
+  };
 
-  ref(el: HTMLDivElement | null): void {
+  ref = (el: HTMLDivElement | null): void => {
     this.dom = el;
-  }
+  };
 
-  getElementAttributes(): ElementAttributes {
+  getElementAttributes = (): ElementAttributes => {
     return {
       className: 'row',
       'data-slot': 'row',
       role: 'presentation',
     };
-  }
+  };
 }

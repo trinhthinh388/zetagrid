@@ -26,25 +26,25 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
     this.rowsMap = new Map();
   }
 
-  getHeaderRows(): HeaderRow<TData>[] {
+  getHeaderRows = (): HeaderRow<TData>[] => {
     return this.rows;
-  }
+  };
 
-  destroy(): void {
+  destroy = (): void => {
     this.rowsMap.clear();
     this.rows.forEach((row) => row.destroy());
-  }
+  };
 
-  getHeaderRowById(rowId: string): HeaderRow<TData> | undefined {
+  getHeaderRowById = (rowId: string): HeaderRow<TData> | undefined => {
     return this.rowsMap.get(rowId);
-  }
+  };
 
-  ref(element: HTMLDivElement | null): void {
+  ref = (element: HTMLDivElement | null): void => {
     this.dom = element;
     if (!this.state.init) this.init();
-  }
+  };
 
-  init(): void {
+  init = (): void => {
     this.#maxDepth = this.#getMaxColumnDefinitionDepth();
     this.rows = Array.from({ length: this.#maxDepth }).map(() => {
       const row = new HeaderRow<TData>({ grid: this.grid });
@@ -53,9 +53,9 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
     });
     this.rows.forEach((row) => row.init());
     this.state.init = true;
-  }
+  };
 
-  getElementAttributes(part: 'header' | 'headerContainer'): ElementAttributes {
+  getElementAttributes = (part: 'header' | 'headerContainer'): ElementAttributes => {
     if (part === 'headerContainer') {
       return {
         role: 'presentation',
@@ -69,7 +69,7 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
       'data-slot': 'presentation',
       className: 'zeta-grid__header',
     };
-  }
+  };
 
   #getMaxColumnDefinitionDepth(): number {
     const dfs = (columnDefinition?: ColumnDefinition<TData>): number => {

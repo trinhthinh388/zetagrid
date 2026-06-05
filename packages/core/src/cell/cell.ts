@@ -31,12 +31,12 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
     this.dom = window.document.createElement('div');
   }
 
-  render(): unknown {
+  render = (): unknown => {
     return this.renderer(this.data, this);
-  }
+  };
 
-  measure(): ComputedRect {
+  measure = (): ComputedRect => {
     this.rect = getComputedRect(this.dom);
     return this.rect;
-  }
+  };
 }
