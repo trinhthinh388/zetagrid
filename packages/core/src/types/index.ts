@@ -3,4 +3,5 @@ export type RowData = {
 };
 
 export * from './columns';
+export * from './elements';
 export * from './rect';
