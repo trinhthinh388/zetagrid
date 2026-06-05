@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "nx": "nx",
-    "storybook": "nx run-many -t storybook"
+    "storybook": "nx run-many -t storybook",
+    "format": "prettier . --write"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",
