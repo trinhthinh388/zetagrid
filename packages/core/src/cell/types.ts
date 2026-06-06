@@ -11,8 +11,8 @@ export interface ICell<TData extends RowData = RowData> {
 }
 
 export type CellRenderer<TData extends RowData = RowData> = (
-  data?: TData,
-  cell?: Cell<TData>,
+  data: TData,
+  cell: Cell<TData>,
 ) => unknown;
 
 export type CellState<TData extends RowData = RowData> = {
