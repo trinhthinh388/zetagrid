@@ -7,7 +7,7 @@ type HeaderRowState = {} & RowState;
 
 export class HeaderRow<TData extends RowData = RowData> extends Row<TData> {
   override type: RowType = 'header';
-  state: HeaderRowState = proxy({
+  override state: HeaderRowState = proxy({
     init: false,
   });
 
@@ -27,6 +27,7 @@ export class HeaderRow<TData extends RowData = RowData> extends Row<TData> {
   };
 
   override init = (): void => {
+    if (!this.dom) return;
     this.cells.forEach((cell) => cell.init());
     this.rect.width = this.cells.reduce((width, cell) => cell.rect.width + width, 0);
     this.rect.height = this.cells.reduce((height, cell) => Math.max(height, cell.rect.height), 0);

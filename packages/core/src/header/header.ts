@@ -41,17 +41,18 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
     if (!this.state.init) this.init();
   };
 
-  init = (): void => {
-    this.#maxDepth = this.#getMaxColumnDefinitionDepth();
-    this.#initRows();
-    this.#initCells();
-    this.state.init = true;
-  };
-
   getHeaderRowById = (rowId: string): HeaderRow<TData> => {
     const row = this.rowsMap.get(rowId);
     if (!row) throw new Error('Cannot get row');
     return row;
+  };
+
+  init = (): void => {
+    if (!this.dom) return;
+    this.#maxDepth = this.#getMaxColumnDefinitionDepth();
+    this.#initRows();
+    this.#initCells();
+    this.state.init = true;
   };
 
   getCellById = (cellId: string): Cell<TData> => {

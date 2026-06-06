@@ -54,7 +54,6 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
     this.colIndex = colIndex;
     this.rowIndex = rowIndex;
     this.renderer = renderer;
-    this.dom = window.document.createElement('div');
   }
 
   destroy = (): void => {
@@ -65,6 +64,7 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
 
   ref = (el: HTMLDivElement | null): void => {
     this.dom = el;
+    if (!this.state.init) this.init();
   };
 
   measure = (): ComputedRect => {
@@ -74,6 +74,7 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
   };
 
   init = (): void => {
+    if (!this.dom) return;
     this.rect.width = this.rect.width * this.colSpan;
     this.rect.height = this.rect.height * this.rowSpan;
     this.state.init = true;

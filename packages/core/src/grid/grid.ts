@@ -57,16 +57,15 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
     return this.header.getCellById(cellId);
   };
 
-  ref = (element: HTMLDivElement | null): void => {
-    this.root = element;
-    if (!this.state.init) this.init();
-  };
-
   init = (): void => {
     if (!this.root) return;
     this.#initGrid();
-    this.#initHeader();
     this.state.init = true;
+  };
+
+  ref = (element: HTMLDivElement | null): void => {
+    this.root = element;
+    if (!this.state.init) this.init();
   };
 
   getElementAttributes = (): ElementAttributes => {
@@ -76,10 +75,6 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
       className: 'zeta-grid__root',
     };
   };
-
-  #initHeader() {
-    this.header.init();
-  }
 
   #createResizeObserver(): ResizeObserver {
     const callback = () => void 0;
