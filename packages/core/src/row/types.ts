@@ -12,6 +12,6 @@ export interface IRow<TData extends RowData = RowData> {
   getCellById: (cellId: string) => Cell<TData> | undefined;
 }
 
-export type RowState = {
+export type RowState<TData extends RowData = RowData> = {
   init: boolean;
 };

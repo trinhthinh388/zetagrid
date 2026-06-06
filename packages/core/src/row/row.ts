@@ -3,7 +3,7 @@ import { Cell } from '../cell/cell';
 import { Grid } from '../grid/grid';
 import { ComputedRect, ElementAttributes, RowData } from '../types';
 import { generateId } from '../utils/generate-id';
-import { IRow, RowType } from './types';
+import { IRow, RowState, RowType } from './types';
 
 export type RowContructorParams<TData extends RowData = RowData> = {
   rowIndex: number;
@@ -16,8 +16,12 @@ export abstract class Row<TData extends RowData = RowData> implements IRow<TData
   rowIndex: number;
   grid: Grid<TData>;
   cells: Cell<TData>[];
+  prefixWidthSum: number[];
   dom: HTMLDivElement | null;
   cellMaps: Map<string, Cell<TData>>;
+  state: RowState<TData> = proxy({
+    init: false,
+  });
   rect: ComputedRect = proxy({
     x: 0,
     y: 0,
@@ -30,25 +34,28 @@ export abstract class Row<TData extends RowData = RowData> implements IRow<TData
     this.cells = [];
     this.grid = grid;
     this.type = 'body';
+    this.prefixWidthSum = [];
     this.rowIndex = rowIndex;
     this.cellMaps = new Map();
     this.rowId = `row:${generateId()}`;
   }
 
-  init = (): void => {
-    return void 0;
-  };
-
   destroy = (): void => {
     return void 0;
   };
 
-  ref = (el: HTMLDivElement | null): void => {
-    this.dom = el;
+  init = (): void => {
+    if (!this.dom) return;
+    this.state.init = true;
   };
 
   getCellById = (cellId: string): Cell<TData> | undefined => {
     return this.cellMaps.get(cellId);
+  };
+
+  ref = (el: HTMLDivElement | null): void => {
+    this.dom = el;
+    if (!this.state.init) this.init();
   };
 
   insertCell = (cell: Cell<TData>): void => {
