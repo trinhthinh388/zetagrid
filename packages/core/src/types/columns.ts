@@ -4,6 +4,6 @@ import { CellRenderer } from '../cell/types';
 export type ColumnDefinition<TData extends RowData = RowData> = {
   id: string;
   title: unknown;
-  renderer: CellRenderer<TData>;
+  cellRenderer: CellRenderer<TData>;
   children: ColumnDefinition<TData>[];
 };

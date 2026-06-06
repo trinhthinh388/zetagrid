@@ -1,3 +1,5 @@
+import * as CSS from 'csstype';
+
 type AriaRole =
   | 'alert'
   | 'alertdialog'
@@ -74,5 +76,6 @@ export type ElementAttributes = {
   role: AriaRole;
   className: string;
   'data-slot': string;
-  [key: string]: string | number;
+  style?: CSS.Properties<string | number>;
+  [key: string]: string | number | CSS.Properties<string | number> | undefined;
 };

@@ -1,9 +1,10 @@
 import { proxy } from 'valtio';
 import { Grid } from '../grid/grid';
-import { RowData } from '../types';
+import { ElementAttributes, RowData } from '../types';
 import { ComputedRect } from '../types/rect';
+import { generateId } from '../utils';
 import { getComputedRect } from '../utils/get-computed-rect';
-import { CellState, ICell } from './types';
+import { CellRenderer, CellState, ICell } from './types';
 
 export type CellContructorParams<TData extends RowData = RowData> = {
   rowSpan: number;
@@ -11,15 +12,21 @@ export type CellContructorParams<TData extends RowData = RowData> = {
   rowIndex: number;
   colIndex: number;
   grid: Grid<TData>;
+  renderer: CellRenderer<TData>;
 };
 
 export class Cell<TData extends RowData = RowData> implements ICell<TData> {
+  static DEFAULT_CELL_HEIGHT = 40;
+  static DEFAULT_CELL_WIDTH = 200;
+
+  id: string;
   colSpan: number;
   rowSpan: number;
   colIndex: number;
   rowIndex: number;
   grid: Grid<TData>;
-  dom: HTMLDivElement;
+  dom: HTMLDivElement | null;
+  renderer: CellRenderer<TData>;
 
   state: CellState<TData> = proxy({
     init: false,
@@ -27,29 +34,60 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
   rect: ComputedRect = proxy({
     x: 0,
     y: 0,
-    width: 0,
-    height: 0,
+    width: Cell.DEFAULT_CELL_WIDTH,
+    height: Cell.DEFAULT_CELL_HEIGHT,
   });
 
-  constructor({ grid, rowSpan, colSpan, rowIndex, colIndex }: CellContructorParams<TData>) {
+  constructor({
+    grid,
+    rowSpan,
+    colSpan,
+    rowIndex,
+    colIndex,
+    renderer,
+  }: CellContructorParams<TData>) {
+    this.id = `cell-${generateId()}`;
+    this.dom = null;
     this.grid = grid;
     this.colSpan = colSpan;
     this.rowSpan = rowSpan;
     this.colIndex = colIndex;
     this.rowIndex = rowIndex;
+    this.renderer = renderer;
     this.dom = window.document.createElement('div');
   }
 
-  destroy = (): void => {};
+  destroy = (): void => {
+    // Do noting
+  };
 
-  render = (): unknown => {};
+  render = <T = unknown>(): T => this.renderer() as T;
 
-  init = (): void => {
-    this.state.init = true;
+  ref = (el: HTMLDivElement | null): void => {
+    this.dom = el;
   };
 
   measure = (): ComputedRect => {
+    if (!this.dom) return this.rect;
     this.rect = getComputedRect(this.dom);
     return this.rect;
+  };
+
+  init = (): void => {
+    this.rect.width = this.rect.width * this.colSpan;
+    this.rect.height = this.rect.height * this.rowSpan;
+    this.state.init = true;
+  };
+
+  getElementAttributes = (): ElementAttributes => {
+    return {
+      role: 'gridcell',
+      'data-slot': 'grid-cell',
+      className: 'zeta-grid__cell',
+      'aria-rowspan': this.rowSpan,
+      'aria-colspan': this.colSpan,
+      'aria-rowindex': this.rowIndex,
+      'aria-colindex': this.colIndex,
+    };
   };
 }

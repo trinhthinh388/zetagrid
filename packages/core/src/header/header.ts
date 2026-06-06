@@ -36,10 +36,6 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
     this.rows.forEach((row) => row.destroy());
   };
 
-  getHeaderRowById = (rowId: string): HeaderRow<TData> | undefined => {
-    return this.rowsMap.get(rowId);
-  };
-
   ref = (element: HTMLDivElement | null): void => {
     this.dom = element;
     if (!this.state.init) this.init();
@@ -49,9 +45,22 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
     this.#maxDepth = this.#getMaxColumnDefinitionDepth();
     this.#initRows();
     this.#initCells();
-
-    this.rows.forEach((row) => row.init());
     this.state.init = true;
+  };
+
+  getHeaderRowById = (rowId: string): HeaderRow<TData> => {
+    const row = this.rowsMap.get(rowId);
+    if (!row) throw new Error('Cannot get row');
+    return row;
+  };
+
+  getCellById = (cellId: string): Cell<TData> => {
+    for (const row of this.rows) {
+      const cell = row.getCellById(cellId);
+      if (cell) return cell;
+    }
+
+    throw new Error(`Cannot find cell with id ${cellId}`);
   };
 
   getElementAttributes = (part: 'header' | 'headerContainer'): ElementAttributes => {
@@ -71,8 +80,8 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
   };
 
   #initRows() {
-    this.rows = Array.from({ length: this.#maxDepth }).map(() => {
-      const row = new HeaderRow<TData>({ grid: this.grid });
+    this.rows = Array.from({ length: this.#maxDepth }).map((_, rowIndex) => {
+      const row = new HeaderRow<TData>({ rowIndex, grid: this.grid });
       this.rowsMap.set(row.rowId, row);
       return row;
     });
@@ -90,26 +99,41 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
   }
 
   #initCells() {
-    const columnDefinitions = this.grid.getColumnDefinitions();
+    const _isLeaf = (columnDefinition: ColumnDefinition<TData>) =>
+      !columnDefinition.children.length;
 
-    const distributeCell = (
-      columnDefinition: ColumnDefinition<TData>,
-      colIndex: number,
-      depth = 0,
-    ) => {
-      const row = this.rows[depth];
-      if (!row) return;
-      const rowSpan = Math.max(columnDefinition.children.length, 1);
-      const colSpan = depth === 0 && !rowSpan ? this.#maxDepth : 1;
-      row.cells.push(new Cell({ rowSpan, colSpan, colIndex, rowIndex: depth, grid: this.grid }));
-
-      columnDefinition.children.forEach((columnDefinition, index) =>
-        distributeCell(columnDefinition, index, depth + 1),
-      );
+    const _getColSpan = (columnDefinition: ColumnDefinition<TData>): number => {
+      if (!columnDefinition.children.length) return 1;
+      return columnDefinition.children.reduce((acc, child) => acc + _getColSpan(child), 0);
     };
 
-    columnDefinitions.forEach((columnDefinition, index) =>
-      distributeCell(columnDefinition, index, 0),
-    );
+    const _insert = (
+      columnDefinitions: ColumnDefinition<TData>[],
+      colIndex: number,
+      currentLevel = 0,
+    ) => {
+      columnDefinitions.forEach((columnDefinition) => {
+        const isLeaf = _isLeaf(columnDefinition);
+        const colSpan = _getColSpan(columnDefinition);
+        const rowSpan = isLeaf ? this.#maxDepth - currentLevel : 1;
+        const rowIndex = isLeaf ? this.#maxDepth - 1 : currentLevel;
+        this.rows.at(rowIndex)?.insertCell(
+          new Cell<TData>({
+            colSpan,
+            rowSpan,
+            colIndex,
+            rowIndex,
+            grid: this.grid,
+            renderer: () => columnDefinition.title,
+          }),
+        );
+
+        if (columnDefinition.children) {
+          _insert(columnDefinition.children, colIndex, currentLevel + 1);
+        }
+      });
+    };
+
+    _insert(this.grid.getColumnDefinitions(), 0, 0);
   }
 }

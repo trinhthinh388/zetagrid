@@ -1,613 +1,144 @@
-import { ColumnDefinition } from '@core';
+import { ColumnDefinition, createColumn } from '@core';
 
 export const columnDefs: ColumnDefinition[] = [
-  {
+  createColumn({
     id: 'personalGroup',
-    renderer: () => null,
     title: 'Personal Information',
     children: [
-      {
-        children: [],
+      createColumn({
         id: 'firstName',
         title: 'First Name',
-        renderer: (data) => data.firstName,
-      },
-      {
-        children: [],
-        id: 'middleName',
-        title: 'Middle Name',
-        renderer: (data) => data.middleName,
-      },
-      {
-        children: [],
-        id: 'lastName',
-        title: 'Last Name',
-        renderer: (data) => data.lastName,
-      },
-      {
-        children: [],
-        id: 'nickname',
-        title: 'Nickname',
-        renderer: (data) => data.nickname,
-      },
-      {
-        id: 'age',
-        title: 'Age',
-        children: [],
-        renderer: (data) => data.age,
-      },
-      {
-        id: 'gender',
-        children: [],
-        title: 'Gender',
-        renderer: (data) => data.gender,
-      },
-      {
-        children: [],
-        id: 'dateOfBirth',
-        title: 'Date of Birth',
-        renderer: (data) => data.dateOfBirth,
-      },
-      {
-        children: [],
-        id: 'nationality',
-        title: 'Nationality',
-        renderer: (data) => data.nationality,
-      },
-      {
-        children: [],
-        id: 'maritalStatus',
-        title: 'Marital Status',
-        renderer: (data) => data.maritalStatus,
-      },
-      {
-        children: [],
-        id: 'bloodType',
-        title: 'Blood Type',
-        renderer: (data) => data.bloodType,
-      },
-      {
-        id: 'ssn',
-        title: 'SSN',
-        children: [],
-        renderer: (data) => data.ssn,
-      },
-      {
-        children: [],
-        id: 'driverLicense',
-        title: 'Driver License',
-        renderer: (data) => data.driverLicense,
-      },
+        cellRenderer: (data) => data.firstName,
+        children: [
+          createColumn({
+            id: 'middleName',
+            title: 'Middle Name',
+            cellRenderer: (data) => data.middleName,
+          }),
+          createColumn({
+            id: 'lastName',
+            title: 'Last Name',
+            cellRenderer: (data) => data.lastName,
+          }),
+        ],
+      }),
     ],
-  },
-  {
+  }),
+  createColumn({
     id: 'contactGroup',
-    renderer: () => null,
     title: 'Contact Information',
     children: [
-      {
-        children: [],
+      createColumn({
         id: 'mobilePhone',
         title: 'Mobile Phone',
-        renderer: (data) => data.mobilePhone,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.mobilePhone,
+      }),
+      createColumn({
         id: 'homePhone',
         title: 'Home Phone',
-        renderer: (data) => data.homePhone,
-      },
-      {
-        children: [],
-        id: 'workPhone',
-        title: 'Work Phone',
-        renderer: (data) => data.workPhone,
-      },
-      {
-        children: [],
-        id: 'personalEmail',
-        title: 'Personal Email',
-        renderer: (data) => data.personalEmail,
-      },
-      {
-        children: [],
-        id: 'workEmail',
-        title: 'Work Email',
-        renderer: (data) => data.workEmail,
-      },
-      {
-        id: 'fax',
-        title: 'Fax',
-        children: [],
-        renderer: (data) => data.fax,
-      },
-      {
-        children: [],
-        id: 'website',
-        title: 'Website',
-        renderer: (data) => data.website,
-      },
-      {
-        id: 'skype',
-        children: [],
-        title: 'Skype',
-        renderer: (data) => data.skype,
-      },
-      {
-        id: 'slack',
-        children: [],
-        title: 'Slack',
-        renderer: (data) => data.slack,
-      },
-      {
-        children: [],
-        id: 'telegram',
-        title: 'Telegram',
-        renderer: (data) => data.telegram,
-      },
+        cellRenderer: (data) => data.homePhone,
+      }),
     ],
-  },
-  {
-    children: [],
+  }),
+  createColumn({
     id: 'Address',
-    renderer: () => null,
     title: 'Address details',
-  },
-  {
-    renderer: () => null,
+  }),
+  createColumn({
     id: 'employmentGroup',
     title: 'Employment Information',
     children: [
-      {
-        children: [],
+      createColumn({
         id: 'jobTitle',
         title: 'Job Title',
-        renderer: (data) => data.jobTitle,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.jobTitle,
+      }),
+      createColumn({
         id: 'department',
         title: 'Department',
-        renderer: (data) => data.department,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.department,
+      }),
+      createColumn({
         id: 'division',
         title: 'Division',
-        renderer: (data) => data.division,
-      },
-      {
+        cellRenderer: (data) => data.division,
+      }),
+      createColumn({
         id: 'team',
-        children: [],
         title: 'Team',
-        renderer: (data) => data.team,
-      },
-      {
+        cellRenderer: (data) => data.team,
+      }),
+      createColumn({
         id: 'role',
-        children: [],
         title: 'Role',
-        renderer: (data) => data.role,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.role,
+      }),
+      createColumn({
         id: 'hireDate',
         title: 'Hire Date',
-        renderer: (data) => data.hireDate,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.hireDate,
+      }),
+      createColumn({
         id: 'terminationDate',
         title: 'Termination Date',
-        renderer: (data) => data.terminationDate,
-      },
-      {
+        cellRenderer: (data) => data.terminationDate,
+      }),
+      createColumn({
         id: 'tenure',
-        children: [],
         title: 'Tenure',
-        renderer: (data) => data.tenure,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.tenure,
+      }),
+      createColumn({
         id: 'employeeId',
         title: 'Employee ID',
-        renderer: (data) => data.employeeId,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.employeeId,
+      }),
+      createColumn({
         id: 'employmentType',
         title: 'Employment Type',
-        renderer: (data) => data.employmentType,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.employmentType,
+      }),
+      createColumn({
         id: 'manager',
         title: 'Manager',
-        renderer: (data) => data.manager,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.manager,
+      }),
+      createColumn({
         id: 'location',
         title: 'Location',
-        renderer: (data) => data.location,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.location,
+      }),
+      createColumn({
         id: 'workSchedule',
         title: 'Work Schedule',
-        renderer: (data) => data.workSchedule,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.workSchedule,
+      }),
+      createColumn({
         id: 'remoteStatus',
         title: 'Remote Status',
-        renderer: (data) => data.remoteStatus,
-      },
+        cellRenderer: (data) => data.remoteStatus,
+      }),
     ],
-  },
-  {
+  }),
+  createColumn({
     id: 'financialGroup',
-    renderer: () => null,
     title: 'Financial Information',
     children: [
-      {
-        children: [],
+      createColumn({
         id: 'baseSalary',
         title: 'Base Salary',
-        renderer: (data) => data.baseSalary,
-      },
-      {
+        cellRenderer: (data) => data.baseSalary,
+      }),
+      createColumn({
         id: 'bonus',
-        children: [],
         title: 'Bonus',
-        renderer: (data) => data.bonus,
-      },
-      {
-        children: [],
+        cellRenderer: (data) => data.bonus,
+      }),
+      createColumn({
         id: 'commission',
         title: 'Commission',
-        renderer: (data) => data.commission,
-      },
-      {
-        children: [],
-        id: 'stockOptions',
-        title: 'Stock Options',
-        renderer: (data) => data.stockOptions,
-      },
-      {
-        children: [],
-        id: 'taxWithholding',
-        title: 'Tax Withholding',
-        renderer: (data) => data.taxWithholding,
-      },
-      {
-        children: [],
-        id: 'retirement401k',
-        title: 'Retirement 401k',
-        renderer: (data) => data.retirement401k,
-      },
-      {
-        children: [],
-        id: 'healthDeduction',
-        title: 'Health Deduction',
-        renderer: (data) => data.healthDeduction,
-      },
-      {
-        children: [],
-        id: 'payFrequency',
-        title: 'Pay Frequency',
-        renderer: (data) => data.payFrequency,
-      },
-      {
-        children: [],
-        id: 'bankAccount',
-        title: 'Bank Account',
-        renderer: (data) => data.bankAccount,
-      },
-      {
-        children: [],
-        id: 'routingNumber',
-        title: 'Routing Number',
-        renderer: (data) => data.routingNumber,
-      },
-      {
-        children: [],
-        id: 'currency',
-        title: 'Currency',
-        renderer: (data) => data.currency,
-      },
-      {
-        children: [],
-        id: 'totalComp',
-        title: 'Total Compensation',
-        renderer: (data) => data.totalComp,
-      },
+        cellRenderer: (data) => data.commission,
+      }),
     ],
-  },
-  {
-    renderer: () => null,
-    id: 'performanceGroup',
-    title: 'Performance & Reviews',
-    children: [
-      {
-        children: [],
-        id: 'overallRating',
-        title: 'Overall Rating',
-        renderer: (data) => data.overallRating,
-      },
-      {
-        children: [],
-        id: 'selfRating',
-        title: 'Self Rating',
-        renderer: (data) => data.selfRating,
-      },
-      {
-        children: [],
-        id: 'managerRating',
-        title: 'Manager Rating',
-        renderer: (data) => data.managerRating,
-      },
-      {
-        children: [],
-        id: 'peerRating',
-        title: 'Peer Rating',
-        renderer: (data) => data.peerRating,
-      },
-      {
-        children: [],
-        id: 'goalsSet',
-        title: 'Goals Set',
-        renderer: (data) => data.goalsSet,
-      },
-      {
-        children: [],
-        id: 'goalsCompleted',
-        title: 'Goals Completed',
-        renderer: (data) => data.goalsCompleted,
-      },
-      {
-        children: [],
-        id: 'completionRate',
-        title: 'Completion Rate',
-        renderer: (data) => data.completionRate,
-      },
-      {
-        children: [],
-        id: 'lastReviewDate',
-        title: 'Last Review Date',
-        renderer: (data) => data.lastReviewDate,
-      },
-      {
-        children: [],
-        id: 'nextReviewDate',
-        title: 'Next Review Date',
-        renderer: (data) => data.nextReviewDate,
-      },
-      {
-        children: [],
-        id: 'promotionEligible',
-        title: 'Promotion Eligible',
-        renderer: (data) => data.promotionEligible,
-      },
-    ],
-  },
-  {
-    id: 'educationGroup',
-    renderer: () => null,
-    title: 'Education & Certifications',
-    children: [
-      {
-        children: [],
-        id: 'highestDegree',
-        title: 'Highest Degree',
-        renderer: (data) => data.highestDegree,
-      },
-      {
-        children: [],
-        id: 'fieldOfStudy',
-        title: 'Field of Study',
-        renderer: (data) => data.fieldOfStudy,
-      },
-      {
-        children: [],
-        id: 'university',
-        title: 'University',
-        renderer: (data) => data.university,
-      },
-      {
-        children: [],
-        id: 'graduationYear',
-        title: 'Graduation Year',
-        renderer: (data) => data.graduationYear,
-      },
-      {
-        children: [],
-        id: 'certName',
-        title: 'Cert Name',
-        renderer: (data) => data.certName,
-      },
-      {
-        children: [],
-        id: 'certIssuer',
-        title: 'Cert Issuer',
-        renderer: (data) => data.certIssuer,
-      },
-      {
-        children: [],
-        id: 'certDate',
-        title: 'Cert Date',
-        renderer: (data) => data.certDate,
-      },
-      {
-        children: [],
-        id: 'certExpiry',
-        title: 'Cert Expiry',
-        renderer: (data) => data.certExpiry,
-      },
-    ],
-  },
-  {
-    id: 'benefitsGroup',
-    renderer: () => null,
-    title: 'Health & Benefits',
-    children: [
-      {
-        children: [],
-        id: 'healthPlan',
-        title: 'Health Plan',
-        renderer: (data) => data.healthPlan,
-      },
-      {
-        children: [],
-        id: 'dentalPlan',
-        title: 'Dental Plan',
-        renderer: (data) => data.dentalPlan,
-      },
-      {
-        children: [],
-        id: 'visionPlan',
-        title: 'Vision Plan',
-        renderer: (data) => data.visionPlan,
-      },
-      {
-        children: [],
-        id: 'lifeInsurance',
-        title: 'Life Insurance',
-        renderer: (data) => data.lifeInsurance,
-      },
-      {
-        children: [],
-        id: 'vacationDays',
-        title: 'Vacation Days',
-        renderer: (data) => data.vacationDays,
-      },
-      {
-        children: [],
-        id: 'sickDays',
-        title: 'Sick Days',
-        renderer: (data) => data.sickDays,
-      },
-      {
-        children: [],
-        id: 'personalDays',
-        title: 'Personal Days',
-        renderer: (data) => data.personalDays,
-      },
-      {
-        children: [],
-        id: 'disability',
-        title: 'Disability',
-        renderer: (data) => data.disability,
-      },
-      {
-        id: 'fsa',
-        title: 'FSA',
-        children: [],
-        renderer: (data) => data.fsa,
-      },
-      {
-        id: 'hsa',
-        title: 'HSA',
-        children: [],
-        renderer: (data) => data.hsa,
-      },
-    ],
-  },
-  {
-    id: 'systemGroup',
-    renderer: () => null,
-    title: 'System & Security',
-    children: [
-      {
-        children: [],
-        id: 'username',
-        title: 'Username',
-        renderer: (data) => data.username,
-      },
-      {
-        children: [],
-        id: 'accountStatus',
-        title: 'Account Status',
-        renderer: (data) => data.accountStatus,
-      },
-      {
-        children: [],
-        id: 'accessLevel',
-        title: 'Access Level',
-        renderer: (data) => data.accessLevel,
-      },
-      {
-        children: [],
-        id: 'createdAt',
-        title: 'Created At',
-        renderer: (data) => data.createdAt,
-      },
-      {
-        children: [],
-        id: 'updatedAt',
-        title: 'Updated At',
-        renderer: (data) => data.updatedAt,
-      },
-      {
-        children: [],
-        id: 'lastLogin',
-        title: 'Last Login',
-        renderer: (data) => data.lastLogin,
-      },
-      {
-        children: [],
-        id: 'ipAddress',
-        title: 'IP Address',
-        renderer: (data) => data.ipAddress,
-      },
-      {
-        children: [],
-        id: 'deviceType',
-        title: 'Device Type',
-        renderer: (data) => data.deviceType,
-      },
-    ],
-  },
-  {
-    id: 'socialGroup',
-    renderer: () => null,
-    title: 'Social & Engagement',
-    children: [
-      {
-        children: [],
-        id: 'linkedIn',
-        title: 'LinkedIn',
-        renderer: (data) => data.linkedIn,
-      },
-      {
-        children: [],
-        id: 'twitter',
-        title: 'Twitter',
-        renderer: (data) => data.twitter,
-      },
-      {
-        id: 'github',
-        children: [],
-        title: 'GitHub',
-        renderer: (data) => data.github,
-      },
-      {
-        children: [],
-        id: 'engagementScore',
-        title: 'Engagement Score',
-        renderer: (data) => data.engagementScore,
-      },
-      {
-        children: [],
-        id: 'lastSurveyDate',
-        title: 'Last Survey Date',
-        renderer: (data) => data.lastSurveyDate,
-      },
-      {
-        children: [],
-        id: 'satisfactionRating',
-        title: 'Satisfaction Rating',
-        renderer: (data) => data.satisfactionRating,
-      },
-    ],
-  },
+  }),
 ];

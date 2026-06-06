@@ -1,4 +1,5 @@
 import { proxy } from 'valtio';
+import { Cell } from '../cell/cell';
 import { Header } from '../header/header';
 import { ComputedRect, ElementAttributes, RowData } from '../types';
 import { ColumnDefinition } from '../types/columns';
@@ -50,6 +51,10 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
 
   getColumnDefinitions = (): ColumnDefinition<TData>[] => {
     return this.columnDefinitions;
+  };
+
+  getCellById = (cellId: string): Cell<TData> => {
+    return this.header.getCellById(cellId);
   };
 
   ref = (element: HTMLDivElement | null): void => {

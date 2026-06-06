@@ -1,10 +1,10 @@
 import { ColumnDefinition, RowData, Grid as _Grid } from '@core';
 import { useEffect, useState } from 'react';
+import { useSnapshot } from 'valtio';
 import { Header } from '../header';
 import { GridProvider } from './grid-context';
 
 import '@styles';
-import { useSnapshot } from 'valtio';
 
 export type GridProps<TData extends RowData = RowData> = {
   data: TData[];

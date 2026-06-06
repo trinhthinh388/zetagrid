@@ -1,15 +1,11 @@
 @use './variables' as *;
 
 .zeta-grid {
-  &__header {
-  }
-
-  &__header-container {
+  &__cell {
+    // position: absolute;
     position: relative;
-  }
-
-  &__header-row {
     display: flex;
     align-items: center;
+    white-space: nowrap;
   }
 }
