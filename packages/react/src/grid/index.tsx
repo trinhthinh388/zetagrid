@@ -1,5 +1,5 @@
 import { ColumnDefinition, RowData, Grid as _Grid } from '@core';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 import { Header } from '../header';
 import { GridProvider } from './grid-context';
@@ -16,19 +16,10 @@ export const Grid = <TData extends RowData = RowData>({ data, columns }: GridPro
 
   const { init } = useSnapshot(grid.state);
 
-  useEffect(() => {
-    grid.init();
-  }, [grid]);
-
   return (
     <GridProvider grid={grid}>
-      <div
-        {...grid.getElementAttributes()}
-        ref={(el) => {
-          grid.ref(el);
-        }}
-      >
-        {!!init && <Header grid={grid} />}
+      <div ref={grid.ref} {...grid.getElementAttributes()}>
+        {!!init && <Header />}
       </div>
     </GridProvider>
   );

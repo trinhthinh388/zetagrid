@@ -34,6 +34,8 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
   rect: ComputedRect = proxy({
     x: 0,
     y: 0,
+    top: 0,
+    left: 0,
     width: Cell.DEFAULT_CELL_WIDTH,
     height: Cell.DEFAULT_CELL_HEIGHT,
   });
@@ -60,6 +62,7 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
     // Do noting
   };
 
+  // @ts-expect-error temporary
   render = <T = unknown>(): T => this.renderer() as T;
 
   ref = (el: HTMLDivElement | null): void => {
@@ -74,7 +77,6 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
   };
 
   init = (): void => {
-    if (!this.dom) return;
     this.rect.width = this.rect.width * this.colSpan;
     this.rect.height = this.rect.height * this.rowSpan;
     this.state.init = true;
@@ -83,6 +85,7 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
   getElementAttributes = (): ElementAttributes => {
     return {
       role: 'gridcell',
+      'data-cell-id': this.id,
       'data-slot': 'grid-cell',
       className: 'zeta-grid__cell',
       'aria-rowspan': this.rowSpan,

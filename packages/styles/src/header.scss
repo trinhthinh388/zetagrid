@@ -5,7 +5,9 @@
   }
 
   &__header-container {
+    overflow-x: auto;
     position: relative;
+    overflow-y: hidden;
   }
 
   &__header-row {

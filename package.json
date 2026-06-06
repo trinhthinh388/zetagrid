@@ -66,6 +66,7 @@
     "@zetagrid/styles": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "valtio": "^2.3.2"
+    "valtio": "^2.3.2",
+    "valtio-reactive": "^0.2.0"
   }
 }

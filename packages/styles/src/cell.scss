@@ -2,9 +2,8 @@
 
 .zeta-grid {
   &__cell {
-    // position: absolute;
-    position: relative;
     display: flex;
+    position: absolute;
     align-items: center;
     white-space: nowrap;
   }

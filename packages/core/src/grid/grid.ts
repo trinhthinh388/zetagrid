@@ -15,7 +15,7 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
   data: TData[];
   rect: ComputedRect;
   header: Header<TData>;
-  root: HTMLElement | null;
+  dom: HTMLElement | null;
   observers: GridObservers;
   columnDefinitions: ColumnDefinition<TData>[];
 
@@ -27,10 +27,12 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
     this.rect = {
       x: 0,
       y: 0,
+      top: 0,
+      left: 0,
       width: 0,
       height: 0,
     };
-    this.root = null;
+    this.dom = null;
     this.data = data;
     this.header = new Header<TData>({
       grid: this,
@@ -58,13 +60,13 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
   };
 
   init = (): void => {
-    if (!this.root) return;
+    if (!this.dom) return;
     this.#initGrid();
     this.state.init = true;
   };
 
   ref = (element: HTMLDivElement | null): void => {
-    this.root = element;
+    this.dom = element;
     if (!this.state.init) this.init();
   };
 
@@ -82,8 +84,8 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
   }
 
   #initGrid() {
-    if (!this.root) return;
-    this.rect = getComputedRect(this.root as HTMLDivElement);
-    this.observers.resize.observe(this.root);
+    if (!this.dom) return;
+    this.rect = getComputedRect(this.dom as HTMLDivElement);
+    this.observers.resize.observe(this.dom);
   }
 }

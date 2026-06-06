@@ -1,4 +1,5 @@
 import { RowData } from '@core';
+import { useSnapshot } from 'valtio';
 import { useGrid } from '../grid/grid-context';
 
 export type CellProps<TData extends RowData = RowData> = {
@@ -17,16 +18,12 @@ export const Cell = <TData extends RowData = RowData>({
 }: CellProps<TData>) => {
   const grid = useGrid<TData>();
   const cell = grid.getCellById(id);
-
-  if (!cell) return null;
+  const { init } = useSnapshot(cell.state);
+  const { top, left, width, height } = useSnapshot(cell.rect);
 
   return (
-    <div
-      ref={cell.ref}
-      style={{ width: cell.rect.width, height: cell.rect.height }}
-      {...cell.getElementAttributes()}
-    >
-      {cell.render()}
+    <div ref={cell.ref} style={{ top, left, width, height }} {...cell.getElementAttributes()}>
+      {!!init && <>{cell.render()}</>}
     </div>
   );
 };
