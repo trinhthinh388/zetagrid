@@ -62,7 +62,6 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
 
     this.#scrollContainer = scrollContainer;
     this.#scrollHandler = () => {
-      console.log(scrollContainer);
       this.scroll.top = scrollContainer.scrollTop;
       this.scroll.left = scrollContainer.scrollLeft;
     };

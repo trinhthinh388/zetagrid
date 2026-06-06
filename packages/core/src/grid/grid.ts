@@ -84,7 +84,9 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
 
   register = (...PluginClasses: (typeof BaseGridPlugin<TData>)[]): void => {
     PluginClasses.forEach((PluginClass) => {
-      this.plugins.set(PluginClass.name, new PluginClass({ grid: this }));
+      const plugin = new PluginClass({ grid: this });
+      this.plugins.set(PluginClass.name, plugin);
+      plugin.init();
     });
   };
 
