@@ -13,8 +13,8 @@ export default defineConfig(() => ({
     nxCopyAssetsPlugin(['*.md']),
     dts({
       entryRoot: 'src',
-      tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
       pathsToAliases: false,
+      tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
     }),
   ],
   // Uncomment this if you are using workers.
@@ -24,24 +24,24 @@ export default defineConfig(() => ({
   // Configuration for building your library.
   // See: https://vite.dev/guide/build.html#library-mode
   build: {
-    outDir: '../../dist/packages/core',
     emptyOutDir: true,
     reportCompressedSize: true,
+    outDir: '../../dist/packages/core',
     commonjsOptions: {
       transformMixedEsModules: true,
-    },
-    lib: {
-      // Could also be a dictionary or array of multiple entry points.
-      entry: 'src/index.ts',
-      name: 'core',
-      fileName: 'index',
-      // Change this to the formats you want to support.
-      // Don't forget to update your package.json as well.
-      formats: ['es' as const],
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
       external: [],
+    },
+    lib: {
+      name: 'core',
+      fileName: 'index',
+      // Could also be a dictionary or array of multiple entry points.
+      entry: 'src/index.ts',
+      // Change this to the formats you want to support.
+      // Don't forget to update your package.json as well.
+      formats: ['es' as const],
     },
   },
 }));

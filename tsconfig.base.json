@@ -15,7 +15,7 @@
     "typeRoots": ["node_modules/@types"],
     "paths": {
       "@core": ["./packages/core/src/index.ts"],
-      "@core/modules/*": ["./packages/core/src/modules/*"],
+      "@core/plugins/*": ["./packages/core/src/plugins/*"],
       "@models": ["./packages/models/src/index.ts"],
       "@react": ["./packages/react/src/index.ts"],
       "@styles": ["./packages/styles/*"]

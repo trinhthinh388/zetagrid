@@ -2,6 +2,7 @@ export * from './cell/cell';
 export * from './cell/types';
 export * from './grid/grid';
 export * from './grid/types';
+export * from './plugins/base';
 export * from './row/row';
 export * from './row/types';
 export * from './types';

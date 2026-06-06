@@ -1,6 +1,7 @@
 import { proxy } from 'valtio';
 import { Cell } from '../cell/cell';
 import { Header } from '../header/header';
+import { BaseGridPlugin } from '../plugins/base';
 import { ComputedRect, ElementAttributes, RowData } from '../types';
 import { ColumnDefinition } from '../types/columns';
 import { getComputedRect } from '../utils/get-computed-rect';
@@ -17,6 +18,7 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
   header: Header<TData>;
   dom: HTMLElement | null;
   observers: GridObservers;
+  plugins: Map<string, BaseGridPlugin<TData>>;
   columnDefinitions: ColumnDefinition<TData>[];
 
   state: GridState = proxy({
@@ -34,6 +36,7 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
     };
     this.dom = null;
     this.data = data;
+    this.plugins = new Map();
     this.header = new Header<TData>({
       grid: this,
     });
@@ -45,10 +48,6 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
 
   getHeader = (): Header<TData> => {
     return this.header;
-  };
-
-  destroy = (): void => {
-    this.observers.resize.disconnect();
   };
 
   getColumnDefinitions = (): ColumnDefinition<TData>[] => {
@@ -70,12 +69,35 @@ export class Grid<TData extends RowData = RowData> implements IGrid<TData> {
     if (!this.state.init) this.init();
   };
 
+  destroy = (): void => {
+    this.plugins.forEach((plugin) => plugin.destroy());
+    this.observers.resize.disconnect();
+  };
+
   getElementAttributes = (): ElementAttributes => {
     return {
       role: 'grid',
       'data-slot': 'grid',
       className: 'zeta-grid__root',
     };
+  };
+
+  register = (...PluginClasses: (typeof BaseGridPlugin<TData>)[]): void => {
+    PluginClasses.forEach((PluginClass) => {
+      this.plugins.set(PluginClass.name, new PluginClass({ grid: this }));
+    });
+  };
+
+  /**
+   * Retrieve a registered plugin by its class.
+   * Throws if not found.
+   */
+  getPlugin = <TPlugin extends typeof BaseGridPlugin<TData>>(
+    PluginClass: TPlugin,
+  ): InstanceType<TPlugin> => {
+    const plugin = this.plugins.get(PluginClass.name);
+    if (!plugin) throw new Error(`Plugin ${PluginClass.name} is not registered`);
+    return plugin as unknown as InstanceType<TPlugin>;
   };
 
   #createResizeObserver(): ResizeObserver {
