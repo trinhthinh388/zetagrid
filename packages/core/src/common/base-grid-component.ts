@@ -5,6 +5,11 @@ export type BaseGridComponentState<T> = {
   init: boolean;
 } & T;
 
+export type RenderResult = {
+  children: RenderResult[];
+  attributes: ElementAttributes;
+};
+
 export abstract class BaseGridComponent<TState extends object> {
   protected dom: HTMLDivElement;
   protected rect: Reactivity<ComputedRect>;
@@ -28,7 +33,7 @@ export abstract class BaseGridComponent<TState extends object> {
 
   abstract init(): void;
   abstract destroy(): void;
-  abstract render(): ElementAttributes;
+  abstract render(): RenderResult[];
 
   getDOM = (): HTMLDivElement => {
     return this.dom;

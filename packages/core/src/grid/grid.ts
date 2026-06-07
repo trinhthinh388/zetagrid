@@ -1,8 +1,8 @@
 import { Cell } from '../cell/cell';
-import { BaseGridComponent } from '../common';
+import { BaseGridComponent, RenderResult } from '../common';
 import { Header } from '../header/header';
 import { BaseGridPlugin } from '../plugins/base';
-import { ElementAttributes, RowData } from '../types';
+import { RowData } from '../types';
 import { ColumnDefinition } from '../types/columns';
 import { GridState, IGrid } from './types';
 
@@ -50,13 +50,16 @@ export class Grid<TData extends RowData = RowData>
     this.#plugins.forEach((plugin) => plugin.destroy());
   };
 
-  render = (): ElementAttributes => {
-    return {
-      role: 'grid',
-      'data-slot': 'grid',
-      className: 'zeta-grid__root',
-    };
-  };
+  render = (): RenderResult[] => [
+    {
+      children: [],
+      attributes: {
+        role: 'grid',
+        'data-slot': 'grid',
+        className: 'zeta-grid__root',
+      },
+    },
+  ];
 
   register = (...PluginClasses: (typeof BaseGridPlugin<TData>)[]): void => {
     PluginClasses.forEach((PluginClass) => {

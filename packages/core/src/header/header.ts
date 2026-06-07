@@ -1,9 +1,9 @@
 import { batch, effect } from 'valtio-reactive';
 import { Cell } from '../cell/cell';
-import { BaseGridComponent } from '../common';
+import { BaseGridComponent, RenderResult } from '../common';
 import { Grid } from '../grid/grid';
 import { HeaderRow } from '../row/header-row';
-import { ColumnDefinition, ElementAttributes, RowData } from '../types';
+import { ColumnDefinition, RowData } from '../types';
 import { HeaderState, IHeader } from './types';
 
 export type HeaderContructorParams<TData extends RowData = RowData> = {
@@ -52,12 +52,6 @@ export class Header<TData extends RowData = RowData>
     this.#rows.forEach((row) => row.destroy());
   };
 
-  render = (): ElementAttributes => ({
-    role: 'header',
-    'data-slot': 'presentation',
-    className: 'zeta-grid__header',
-  });
-
   getHeaderRowById = (rowId: string): HeaderRow<TData> => {
     const row = this.#rowsMap.get(rowId);
     if (!row) throw new Error('Cannot get row');
@@ -92,6 +86,26 @@ export class Header<TData extends RowData = RowData>
 
     this.state.set('init', true);
   };
+
+  render = (): RenderResult[] => [
+    {
+      attributes: {
+        role: 'header',
+        'data-slot': 'presentation',
+        className: 'zeta-grid__header',
+      },
+      children: [
+        {
+          children: [],
+          attributes: {
+            role: 'presentation',
+            'data-slot': 'header-container',
+            className: 'zeta-grid__header-container',
+          },
+        },
+      ],
+    },
+  ];
 
   #initRows() {
     this.#rows.forEach((row) => row.init());
