@@ -54,13 +54,6 @@ export default [
           type: 'line-length',
         },
       ],
-      'perfectionist/sort-classes': [
-        'error',
-        {
-          order: 'asc',
-          type: 'line-length',
-        },
-      ],
       'perfectionist/sort-interfaces': [
         'error',
         {
@@ -80,6 +73,27 @@ export default [
         {
           disallowPrototype: true,
           classPropertiesAllowed: true,
+        },
+      ],
+      'perfectionist/sort-classes': [
+        'error',
+        {
+          order: 'asc',
+          type: 'line-length',
+          groups: [
+            'index-signature',
+            'static-property',
+            'private-property',
+            'protected-property',
+            'property',
+            'constructor',
+            'static-method',
+            'method',
+            'protected-method',
+            'private-method',
+            ['get-method', 'set-method'],
+            'unknown',
+          ],
         },
       ],
     },

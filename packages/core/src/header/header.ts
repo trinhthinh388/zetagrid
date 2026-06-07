@@ -1,6 +1,6 @@
-import { proxy } from 'valtio';
 import { batch, effect } from 'valtio-reactive';
 import { Cell } from '../cell/cell';
+import { BaseGridComponent } from '../common';
 import { Grid } from '../grid/grid';
 import { HeaderRow } from '../row/header-row';
 import { ColumnDefinition, ElementAttributes, RowData } from '../types';
@@ -10,63 +10,62 @@ export type HeaderContructorParams<TData extends RowData = RowData> = {
   grid: Grid<TData>;
 };
 
-export class Header<TData extends RowData = RowData> implements IHeader<TData> {
-  grid: Grid<TData>;
-  dom: HTMLElement | null;
-  rows: HeaderRow<TData>[];
+export class Header<TData extends RowData = RowData>
+  extends BaseGridComponent<HeaderState>
+  implements IHeader<TData>
+{
+  #maxDepth = 0;
+  #leafNodeCount = 0;
+  #grid: Grid<TData>;
+  #rows: HeaderRow<TData>[];
   /**
    * Disposed functions used to cleanup any `effect` listeners.
    */
-  disposes: VoidFunction[];
+  #disposes: VoidFunction[];
   /**
    * Pre-calculated prefixSum of cells' width
    */
-  prefixWidthSum: number[];
+  #prefixWidthSum: number[];
+
   /**
    * Pre-calculated prefixSum of cells' height
    */
-  prefixHeightSum: number[];
-  rowsMap: Map<string, HeaderRow<TData>>;
-
-  state: HeaderState = proxy({
-    init: false,
-  });
-
-  #maxDepth = 0;
-  #leafNodeCount = 0;
+  #prefixHeightSum: number[];
+  #rowsMap: Map<string, HeaderRow<TData>>;
 
   constructor({ grid }: HeaderContructorParams<TData>) {
-    this.rows = [];
-    this.dom = null;
-    this.grid = grid;
-    this.disposes = [];
-    this.rowsMap = new Map();
-    this.prefixWidthSum = [];
-    this.prefixHeightSum = [];
+    super();
+    this.#rows = [];
+    this.#grid = grid;
+    this.#disposes = [];
+    this.#rowsMap = new Map();
+    this.#prefixWidthSum = [];
+    this.#prefixHeightSum = [];
   }
 
   getHeaderRows = (): HeaderRow<TData>[] => {
-    return this.rows;
+    return this.#rows;
   };
 
   destroy = (): void => {
-    this.rowsMap.clear();
-    this.rows.forEach((row) => row.destroy());
+    this.#rowsMap.clear();
+    this.#rows.forEach((row) => row.destroy());
   };
 
-  ref = (element: HTMLDivElement | null): void => {
-    this.dom = element;
-    if (!this.state.init) this.init();
-  };
+  render = (): ElementAttributes => ({
+    role: 'header',
+    'data-slot': 'presentation',
+    className: 'zeta-grid__header',
+  });
 
   getHeaderRowById = (rowId: string): HeaderRow<TData> => {
-    const row = this.rowsMap.get(rowId);
+    const row = this.#rowsMap.get(rowId);
     if (!row) throw new Error('Cannot get row');
     return row;
   };
 
   getCellById = (cellId: string): Cell<TData> => {
-    for (const row of this.rows) {
+    for (const row of this.#rows) {
       const cell = row.getCellById(cellId);
       if (cell) return cell;
     }
@@ -75,11 +74,14 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
   };
 
   init = (): void => {
-    if (!this.dom) return;
     this.#leafNodeCount = this.#getLeafNodeCount();
     this.#maxDepth = this.#getMaxColumnDefinitionDepth();
+
+    this.#createRows();
+    this.#createCells();
+
+    // Initialize
     this.#initRows();
-    this.#initCells();
 
     // Calculation
     this.#calculatePrefixWidthSum();
@@ -88,44 +90,23 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
     // Listeners
     this.#listenToRowRectChange();
 
-    this.state.init = true;
+    this.state.set('init', true);
   };
 
-  getElementAttributes = (part: 'header' | 'headerContainer'): ElementAttributes => {
-    if (part === 'headerContainer') {
-      return {
-        role: 'presentation',
-        'data-slot': 'grid-header-container',
-        className: 'zeta-grid__header-container',
-      };
-    }
-
-    return {
-      role: 'header',
-      'data-slot': 'presentation',
-      className: 'zeta-grid__header',
-    };
-  };
+  #initRows() {
+    this.#rows.forEach((row) => row.init());
+  }
 
   #isLeaf = (columnDefinition: ColumnDefinition<TData>) => !columnDefinition.children.length;
 
   #getLeafNodeCount(): number {
-    return this.grid
+    return this.#grid
       .getColumnDefinitions()
       .reduce((count, current) => count + this.#getColSpan(current), 0);
   }
 
-  #calculatePrefixHeightSum() {
-    let sofar = 0;
-    for (let i = 0; i < this.rows.length; i++) {
-      const row = this.rows[i];
-      this.prefixHeightSum[i] = sofar;
-      sofar += row.rect.height;
-    }
-  }
-
   #listenToRowRectChange() {
-    this.disposes.push(
+    this.#disposes.push(
       effect(() => {
         this.#calculatePrefixWidthSum();
         this.#calculatePrefixHeightSum();
@@ -134,33 +115,42 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
     );
   }
 
+  #calculatePrefixHeightSum() {
+    let sofar = 0;
+    for (let i = 0; i < this.#rows.length; i++) {
+      const row = this.#rows[i];
+      this.#prefixHeightSum[i] = sofar;
+      sofar += row.getRect().height;
+    }
+  }
+
   #getColSpan = (columnDefinition: ColumnDefinition<TData>): number => {
     if (!columnDefinition.children.length) return 1;
     return columnDefinition.children.reduce((acc, child) => acc + this.#getColSpan(child), 0);
   };
 
   #calculatePrefixWidthSum() {
-    const lastRow = this.rows.at(-1);
+    const lastRow = this.#rows.at(-1);
     if (!lastRow) return;
 
     let sofar = 0;
-    for (let i = 0; i < lastRow.cells.length; i++) {
-      const cell = lastRow.cells[i];
-      this.prefixWidthSum[i] = sofar;
+    for (let i = 0; i < lastRow.getCells().length; i++) {
+      const cell = lastRow.getCells()[i];
+      this.#prefixWidthSum[i] = sofar;
       sofar += cell.rect.width;
     }
   }
 
-  #calculateCellPosition() {
+  #calculateCellPosition = () => {
     batch(() => {
-      this.rows.forEach((row, rowIndex) => {
-        row.cells.forEach((cell) => {
-          cell.rect.left = this.prefixWidthSum[cell.colIndex];
-          cell.rect.top = this.prefixHeightSum[rowIndex - (cell.rowSpan - 1)];
+      this.#rows.forEach((row, rowIndex) => {
+        row.getCells().forEach((cell) => {
+          cell.rect.left = this.#prefixWidthSum[cell.colIndex];
+          cell.rect.top = this.#prefixHeightSum[rowIndex - (cell.rowSpan - 1)];
         });
       });
     });
-  }
+  };
 
   #getMaxColumnDefinitionDepth(): number {
     const dfs = (columnDefinition?: ColumnDefinition<TData>): number => {
@@ -170,28 +160,28 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
         1,
       );
     };
-    return this.grid.getColumnDefinitions().reduce((max, def) => Math.max(max, dfs(def)), 0);
+    return this.#grid.getColumnDefinitions().reduce((max, def) => Math.max(max, dfs(def)), 0);
   }
 
-  #initRows() {
+  #createRows() {
     const rowCount = this.#maxDepth;
     const columnCount = this.#leafNodeCount;
 
-    this.rows = Array.from({ length: rowCount });
-    this.prefixWidthSum = Array.from({ length: columnCount });
+    this.#rows = Array.from({ length: rowCount });
+    this.#prefixWidthSum = Array.from({ length: columnCount });
 
     for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
       const row = new HeaderRow<TData>({
         rowIndex,
-        grid: this.grid,
+        grid: this.#grid,
         nodeCount: this.#leafNodeCount,
       });
-      this.rows[rowIndex] = row;
-      this.rowsMap.set(row.rowId, row);
+      this.#rows[rowIndex] = row;
+      this.#rowsMap.set(row.getRowId(), row);
     }
   }
 
-  #initCells() {
+  #createCells() {
     const _insert = (
       columnDefinitions: ColumnDefinition<TData>[],
       currentLevel = 0,
@@ -203,12 +193,12 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
         const colSpan = this.#getColSpan(columnDefinition);
         const rowSpan = isLeaf ? this.#maxDepth - currentLevel : 1;
         const rowIndex = isLeaf ? this.#maxDepth - 1 : currentLevel; // Insert leaf node at the last row
-        this.rows.at(rowIndex)?.insertCell(
+        this.#rows.at(rowIndex)?.insertCell(
           new Cell<TData>({
             colSpan,
             rowSpan,
             rowIndex,
-            grid: this.grid,
+            grid: this.#grid,
             colIndex: leafColOffset,
             renderer: () => columnDefinition.title,
           }),
@@ -222,6 +212,6 @@ export class Header<TData extends RowData = RowData> implements IHeader<TData> {
       });
     };
 
-    _insert(this.grid.getColumnDefinitions(), 0, 0);
+    _insert(this.#grid.getColumnDefinitions(), 0, 0);
   }
 }

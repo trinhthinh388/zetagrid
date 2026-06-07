@@ -1,5 +1,6 @@
 export * from './cell/cell';
 export * from './cell/types';
+export * from './constants';
 export * from './grid/grid';
 export * from './grid/types';
 export * from './plugins/base';

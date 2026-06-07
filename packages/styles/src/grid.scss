@@ -1,6 +1,10 @@
 @use './variables' as *;
 
 .zeta-grid {
+  &__wrapper {
+    display: contents;
+  }
+
   &__root {
     position: relative;
     box-sizing: border-box;
