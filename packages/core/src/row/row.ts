@@ -1,7 +1,7 @@
 import { Cell } from '../cell/cell';
 import { BaseGridComponent, RenderResult } from '../common';
 import { Grid } from '../grid/grid';
-import { RowData } from '../types';
+import { ComputedRect, RowData } from '../types';
 import { generateId } from '../utils/generate-id';
 import { IRow, RowState, RowType } from './types';
 
@@ -40,22 +40,19 @@ export abstract class Row<TData extends RowData = RowData>
     return this.cells;
   };
 
-  destroy = (): void => {
-    this.disposes.forEach((dispose) => dispose());
-  };
-
   getCellById = (cellId: string): Cell<TData> | undefined => {
     return this.cellMaps.get(cellId);
   };
 
-  init = (): void => {
-    this.cells.forEach((cell) => cell.init());
-    this.state.set('init', true);
-  };
-
   insertCell = (cell: Cell<TData>): void => {
     this.cells.push(cell);
-    this.cellMaps.set(cell.id, cell);
+    this.cellMaps.set(cell.getId(), cell);
+  };
+
+  destroy = (): void => {
+    this.cells.forEach((cell) => cell.destroy());
+    this.disposes.forEach((dispose) => dispose());
+    this.cellMaps.clear();
   };
 
   render = (): RenderResult[] => [
@@ -68,4 +65,27 @@ export abstract class Row<TData extends RowData = RowData>
       },
     },
   ];
+
+  init = (): void => {
+    this.cells.forEach((cell) => cell.init());
+    this.measure();
+
+    this.useEffect(() => {
+      this.measure();
+    });
+
+    this.state.set('init', true);
+  };
+
+  override measure = (): ComputedRect => {
+    this.rect.set(
+      'height',
+      this.cells.reduce((height, cell) => Math.min(height, cell.getRect().height), Infinity),
+    );
+    this.rect.set(
+      'width',
+      this.cells.reduce((width, cell) => width + cell.getRect().width, 0),
+    );
+    return this.rect.getAll();
+  };
 }

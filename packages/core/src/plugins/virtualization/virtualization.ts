@@ -8,7 +8,7 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
    * Number of extra rows/columns to render outside the visible viewport
    * to avoid flicker during scrolling.
    */
-  overscan = 2;
+  overscan = 5;
 
   /**
    * Reactive scroll state — tracked via valtio so that consumers
@@ -79,13 +79,13 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
    */
   getVisibleRowRange = (): [start: number, end: number] => {
     const header = this.grid.getHeader();
-    const prefixHeightSum = header.prefixHeightSum;
+    const prefixHeightSum = header.getPrefixHeightSum();
     const totalRows = prefixHeightSum.length;
 
     if (totalRows === 0) return [0, 0];
 
     const viewportTop = this.scroll.top;
-    const viewportBottom = viewportTop + this.grid.rect.height;
+    const viewportBottom = viewportTop + this.grid.getRect().height;
 
     const start = this.#lowerBound(prefixHeightSum, viewportTop) - 1;
     const end = this.#upperBound(prefixHeightSum, viewportBottom);
@@ -103,13 +103,13 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
    */
   getVisibleColRange = (): [start: number, end: number] => {
     const header = this.grid.getHeader();
-    const prefixWidthSum = header.prefixWidthSum;
+    const prefixWidthSum = header.getPrefixWidthSum();
     const totalCols = prefixWidthSum.length;
 
     if (totalCols === 0) return [0, 0];
 
     const viewportLeft = this.scroll.left;
-    const viewportRight = viewportLeft + this.grid.rect.width;
+    const viewportRight = viewportLeft + this.grid.getRect().width;
 
     // First column whose right edge is past the viewport left
     const start = this.#lowerBound(prefixWidthSum, viewportLeft) - 1;
@@ -124,11 +124,11 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
    * (with overscan padding applied).
    */
   isCellVisible = (cell: Cell<TData>): boolean => {
-    const { top, left, width, height } = cell.rect;
+    const { top, left, width, height } = cell.getRect();
     const viewportTop = this.scroll.top;
     const viewportLeft = this.scroll.left;
-    const viewportWidth = this.grid.rect.width;
-    const viewportHeight = this.grid.rect.height;
+    const viewportWidth = this.grid.getRect().width;
+    const viewportHeight = this.grid.getRect().height;
 
     const overscanX = this.overscan * Cell.DEFAULT_CELL_WIDTH;
     const overscanY = this.overscan * Cell.DEFAULT_CELL_HEIGHT;

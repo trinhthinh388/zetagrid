@@ -1,13 +1,13 @@
-import { ComputedRect, ElementAttributes, RowData } from '../types';
+import { RowData } from '../types';
 import { Cell } from './cell';
 
 export interface ICell<TData extends RowData = RowData> {
-  init: () => void;
-  destroy: () => void;
-  measure: () => ComputedRect;
-  render: <T = unknown>() => T;
-  ref: (el: HTMLDivElement | null) => void;
-  getElementAttributes: () => ElementAttributes;
+  getId: () => string;
+  getColSpan: () => number;
+  getRowSpan: () => number;
+  getColIndex: () => number;
+  getRowIndex: () => number;
+  renderCell: <T = unknown>() => T;
 }
 
 export type CellRenderer<TData extends RowData = RowData> = (

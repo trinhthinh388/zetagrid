@@ -39,6 +39,10 @@ export class Header<TData extends RowData = RowData>
     this.prefixHeightSum = [];
   }
 
+  getPrefixWidthSum = (): number[] => this.prefixWidthSum;
+
+  getPrefixHeightSum = (): number[] => this.prefixHeightSum;
+
   getHeaderRows = (): HeaderRow<TData>[] => {
     return this.rows;
   };
@@ -142,7 +146,7 @@ export class Header<TData extends RowData = RowData>
     for (let i = 0; i < lastRow.getCells().length; i++) {
       const cell = lastRow.getCells()[i];
       this.prefixWidthSum[i] = sofar;
-      sofar += cell.rect.width;
+      sofar += cell.getRect().width;
     }
   }
 
@@ -150,8 +154,8 @@ export class Header<TData extends RowData = RowData>
     batch(() => {
       this.rows.forEach((row, rowIndex) => {
         row.getCells().forEach((cell) => {
-          cell.rect.left = this.prefixWidthSum[cell.colIndex];
-          cell.rect.top = this.prefixHeightSum[rowIndex - (cell.rowSpan - 1)];
+          cell.getRect().left = this.prefixWidthSum[cell.getColIndex()];
+          cell.getRect().top = this.prefixHeightSum[rowIndex - (cell.getRowSpan() - 1)];
         });
       });
     });

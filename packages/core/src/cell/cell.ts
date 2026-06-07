@@ -1,9 +1,7 @@
-import { proxy } from 'valtio';
+import { BaseGridComponent, RenderResult } from '../common';
 import { Grid } from '../grid/grid';
-import { ElementAttributes, RowData } from '../types';
-import { ComputedRect } from '../types/rect';
+import { RowData } from '../types';
 import { generateId } from '../utils';
-import { getComputedRect } from '../utils/get-computed-rect';
 import { CellRenderer, CellState, ICell } from './types';
 
 export type CellContructorParams<TData extends RowData = RowData> = {
@@ -15,30 +13,21 @@ export type CellContructorParams<TData extends RowData = RowData> = {
   renderer: CellRenderer<TData>;
 };
 
-export class Cell<TData extends RowData = RowData> implements ICell<TData> {
+export class Cell<TData extends RowData = RowData>
+  extends BaseGridComponent<CellState<TData>>
+  implements ICell<TData>
+{
   static DEFAULT_CELL_HEIGHT = 40;
   static DEFAULT_CELL_WIDTH = 200;
 
-  id: string;
-  colSpan: number;
-  rowSpan: number;
-  colIndex: number;
-  rowIndex: number;
-  grid: Grid<TData>;
-  dom: HTMLDivElement | null;
-  renderer: CellRenderer<TData>;
+  private id: string;
+  private colSpan: number;
+  private rowSpan: number;
+  private colIndex: number;
+  private rowIndex: number;
 
-  state: CellState<TData> = proxy({
-    init: false,
-  });
-  rect: ComputedRect = proxy({
-    x: 0,
-    y: 0,
-    top: 0,
-    left: 0,
-    width: Cell.DEFAULT_CELL_WIDTH,
-    height: Cell.DEFAULT_CELL_HEIGHT,
-  });
+  private grid: Grid<TData>;
+  private renderer: CellRenderer<TData>;
 
   constructor({
     grid,
@@ -48,8 +37,8 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
     colIndex,
     renderer,
   }: CellContructorParams<TData>) {
+    super();
     this.id = `cell-${generateId()}`;
-    this.dom = null;
     this.grid = grid;
     this.colSpan = colSpan;
     this.rowSpan = rowSpan;
@@ -58,40 +47,53 @@ export class Cell<TData extends RowData = RowData> implements ICell<TData> {
     this.renderer = renderer;
   }
 
+  getId = (): string => this.id;
+
+  getColSpan = (): number => this.colSpan;
+
+  getRowSpan = (): number => this.rowSpan;
+
+  getRowIndex = (): number => this.rowIndex;
+
+  getColIndex = (): number => this.colIndex;
+
+  renderCell = <T = unknown>(): T => this.renderer();
+
   destroy = (): void => {
-    // Do noting
-  };
-
-  // @ts-expect-error temporary
-  render = <T = unknown>(): T => this.renderer() as T;
-
-  ref = (el: HTMLDivElement | null): void => {
-    this.dom = el;
-    if (!this.state.init) this.init();
-  };
-
-  measure = (): ComputedRect => {
-    if (!this.dom) return this.rect;
-    this.rect = getComputedRect(this.dom);
-    return this.rect;
+    this.disposes.forEach((dispose) => dispose());
   };
 
   init = (): void => {
-    this.rect.width = this.rect.width * this.colSpan;
-    this.rect.height = this.rect.height * this.rowSpan;
-    this.state.init = true;
+    this.rect.set(
+      'width',
+      Math.max(this.rect.get('width'), Cell.DEFAULT_CELL_WIDTH) * this.colSpan,
+    );
+    this.rect.set(
+      'height',
+      Math.max(this.rect.get('height'), Cell.DEFAULT_CELL_HEIGHT) * this.rowSpan,
+    );
+    this.state.set('init', true);
   };
 
-  getElementAttributes = (): ElementAttributes => {
-    return {
-      role: 'gridcell',
-      'data-cell-id': this.id,
-      'data-slot': 'grid-cell',
-      className: 'zeta-grid__cell',
-      'aria-rowspan': this.rowSpan,
-      'aria-colspan': this.colSpan,
-      'aria-rowindex': this.rowIndex,
-      'aria-colindex': this.colIndex,
-    };
-  };
+  render = (): RenderResult[] => [
+    {
+      children: [],
+      attributes: {
+        role: 'gridcell',
+        'data-cell-id': this.id,
+        'data-slot': 'grid-cell',
+        className: 'zeta-grid__cell',
+        'aria-rowspan': this.rowSpan,
+        'aria-colspan': this.colSpan,
+        'aria-rowindex': this.rowIndex,
+        'aria-colindex': this.colIndex,
+        style: {
+          top: this.rect.get('top'),
+          left: this.rect.get('left'),
+          width: this.rect.get('width'),
+          height: this.rect.get('height'),
+        },
+      },
+    },
+  ];
 }

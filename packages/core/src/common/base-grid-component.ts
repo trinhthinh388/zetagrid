@@ -38,6 +38,8 @@ export abstract class BaseGridComponent<TState extends object> {
   abstract destroy(): void;
   abstract render(): RenderResult[];
 
+  measure = (): ComputedRect => this.rect.getAll();
+
   getDOM = (): HTMLDivElement => {
     return this.dom;
   };
