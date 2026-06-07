@@ -1,5 +1,4 @@
 import { proxy } from 'valtio';
-import { effect } from 'valtio-reactive';
 
 type SetOverload<T> = {
   (state: Partial<T>): void;
@@ -9,20 +8,16 @@ type SetOverload<T> = {
 export class Reactivity<T extends object> {
   #state: T;
 
-  #disposes: VoidFunction[];
-
   constructor(initial: T) {
-    this.#disposes = [];
     this.#state = proxy(initial);
   }
 
-  get = () => {
+  getAll = () => {
     return this.#state;
   };
 
-  subscribe = (callback: VoidFunction): VoidFunction => effect(callback);
-  cleanup = () => {
-    this.#disposes.forEach((dispose) => dispose());
+  get = <K extends keyof T>(key: K): T[K] => {
+    return this.#state[key];
   };
 
   set: SetOverload<T> = (...args: unknown[]) => {

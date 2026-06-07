@@ -1,3 +1,4 @@
+import { effect } from 'valtio-reactive';
 import { ComputedRect, ElementAttributes } from '../types';
 import { Reactivity } from './reactivity';
 
@@ -12,6 +13,7 @@ export type RenderResult = {
 
 export abstract class BaseGridComponent<TState extends object> {
   protected dom: HTMLDivElement;
+  protected disposes: VoidFunction[];
   protected rect: Reactivity<ComputedRect>;
   protected state: Reactivity<BaseGridComponentState<TState>>;
 
@@ -24,6 +26,7 @@ export abstract class BaseGridComponent<TState extends object> {
       width: 0,
       height: 0,
     });
+    this.disposes = [];
     this.state = new Reactivity<BaseGridComponentState<TState>>({
       init: false,
       ...initial,
@@ -40,10 +43,14 @@ export abstract class BaseGridComponent<TState extends object> {
   };
 
   getRect = (): ComputedRect => {
-    return this.rect.get();
+    return this.rect.getAll();
   };
 
   getState = (): BaseGridComponentState<TState> => {
-    return this.state.get();
+    return this.state.getAll();
+  };
+
+  useEffect = (callback: VoidFunction): void => {
+    this.disposes.push(effect(callback));
   };
 }

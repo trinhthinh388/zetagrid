@@ -15,39 +15,39 @@ export class Grid<TData extends RowData = RowData>
   extends BaseGridComponent<GridState>
   implements IGrid<TData>
 {
-  #header: Header<TData>;
-  #plugins: Map<string, BaseGridPlugin<TData>>;
-  #columnDefinitions: ColumnDefinition<TData>[];
+  private header: Header<TData>;
+  private plugins: Map<string, BaseGridPlugin<TData>>;
+  private columnDefinitions: ColumnDefinition<TData>[];
 
   constructor({ columnDefinitions }: GridConstructorParams<TData>) {
     super();
-    this.#plugins = new Map();
-    this.#header = new Header<TData>({
+    this.plugins = new Map();
+    this.header = new Header<TData>({
       grid: this,
     });
-    this.#columnDefinitions = columnDefinitions;
+    this.columnDefinitions = columnDefinitions;
   }
 
   getHeader = (): Header<TData> => {
-    return this.#header;
+    return this.header;
   };
 
   init = (): void => {
-    this.#header.init();
+    this.header.init();
     this.state.set('init', true);
   };
 
   getColumnDefinitions = (): ColumnDefinition<TData>[] => {
-    return this.#columnDefinitions;
+    return this.columnDefinitions;
   };
 
   getCellById = (cellId: string): Cell<TData> => {
-    return this.#header.getCellById(cellId);
+    return this.header.getCellById(cellId);
   };
 
   destroy = (): void => {
-    this.#header.destroy();
-    this.#plugins.forEach((plugin) => plugin.destroy());
+    this.header.destroy();
+    this.plugins.forEach((plugin) => plugin.destroy());
   };
 
   render = (): RenderResult[] => [
@@ -64,7 +64,7 @@ export class Grid<TData extends RowData = RowData>
   register = (...PluginClasses: (typeof BaseGridPlugin<TData>)[]): void => {
     PluginClasses.forEach((PluginClass) => {
       const plugin = new PluginClass({ grid: this });
-      this.#plugins.set(PluginClass.name, plugin);
+      this.plugins.set(PluginClass.name, plugin);
       plugin.init();
     });
   };
@@ -72,7 +72,7 @@ export class Grid<TData extends RowData = RowData>
   getPlugin = <TPlugin extends typeof BaseGridPlugin<TData>>(
     PluginClass: TPlugin,
   ): InstanceType<TPlugin> => {
-    const plugin = this.#plugins.get(PluginClass.name);
+    const plugin = this.plugins.get(PluginClass.name);
     if (!plugin) throw new Error(`Plugin ${PluginClass.name} is not registered`);
     return plugin as unknown as InstanceType<TPlugin>;
   };

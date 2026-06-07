@@ -1,4 +1,4 @@
-import { batch, effect } from 'valtio-reactive';
+import { batch } from 'valtio-reactive';
 import { Cell } from '../cell/cell';
 import { BaseGridComponent, RenderResult } from '../common';
 import { Grid } from '../grid/grid';
@@ -14,77 +14,54 @@ export class Header<TData extends RowData = RowData>
   extends BaseGridComponent<HeaderState>
   implements IHeader<TData>
 {
-  #maxDepth = 0;
-  #leafNodeCount = 0;
-  #grid: Grid<TData>;
-  #rows: HeaderRow<TData>[];
-  /**
-   * Disposed functions used to cleanup any `effect` listeners.
-   */
-  #disposes: VoidFunction[];
+  private maxDepth = 0;
+  private leafNodeCount = 0;
+  private grid: Grid<TData>;
+  private rows: HeaderRow<TData>[];
   /**
    * Pre-calculated prefixSum of cells' width
    */
-  #prefixWidthSum: number[];
+  private prefixWidthSum: number[];
 
   /**
    * Pre-calculated prefixSum of cells' height
    */
-  #prefixHeightSum: number[];
-  #rowsMap: Map<string, HeaderRow<TData>>;
+  private prefixHeightSum: number[];
+  private rowsMap: Map<string, HeaderRow<TData>>;
 
   constructor({ grid }: HeaderContructorParams<TData>) {
     super();
-    this.#rows = [];
-    this.#grid = grid;
-    this.#disposes = [];
-    this.#rowsMap = new Map();
-    this.#prefixWidthSum = [];
-    this.#prefixHeightSum = [];
+    this.rows = [];
+    this.grid = grid;
+    this.disposes = [];
+    this.rowsMap = new Map();
+    this.prefixWidthSum = [];
+    this.prefixHeightSum = [];
   }
 
   getHeaderRows = (): HeaderRow<TData>[] => {
-    return this.#rows;
+    return this.rows;
   };
 
   destroy = (): void => {
-    this.#rowsMap.clear();
-    this.#rows.forEach((row) => row.destroy());
+    this.disposes.forEach((dispose) => dispose());
+    this.rows.forEach((row) => row.destroy());
+    this.rowsMap.clear();
   };
 
   getHeaderRowById = (rowId: string): HeaderRow<TData> => {
-    const row = this.#rowsMap.get(rowId);
+    const row = this.rowsMap.get(rowId);
     if (!row) throw new Error('Cannot get row');
     return row;
   };
 
   getCellById = (cellId: string): Cell<TData> => {
-    for (const row of this.#rows) {
+    for (const row of this.rows) {
       const cell = row.getCellById(cellId);
       if (cell) return cell;
     }
 
     throw new Error(`Cannot find cell with id ${cellId}`);
-  };
-
-  init = (): void => {
-    this.#leafNodeCount = this.#getLeafNodeCount();
-    this.#maxDepth = this.#getMaxColumnDefinitionDepth();
-
-    this.#createRows();
-    this.#createCells();
-
-    // Initialize
-    this.#initRows();
-
-    // Calculation
-    this.#calculatePrefixWidthSum();
-    this.#calculatePrefixHeightSum();
-
-    // Listeners
-    this.#listenToRowRectChange();
-
-    this.state.set('init', true);
   };
 
   render = (): RenderResult[] => [
@@ -107,33 +84,47 @@ export class Header<TData extends RowData = RowData>
     },
   ];
 
+  init = (): void => {
+    this.leafNodeCount = this.#getLeafNodeCount();
+    this.maxDepth = this.#getMaxColumnDefinitionDepth();
+
+    this.#createRows();
+    this.#createCells();
+
+    // Initialize
+    this.#initRows();
+
+    // Calculation
+    this.#calculatePrefixWidthSum();
+    this.#calculatePrefixHeightSum();
+
+    // Listeners
+    this.useEffect(() => {
+      this.#calculatePrefixWidthSum();
+      this.#calculatePrefixHeightSum();
+      this.#calculateCellPosition();
+    });
+
+    this.state.set('init', true);
+  };
+
   #initRows() {
-    this.#rows.forEach((row) => row.init());
+    this.rows.forEach((row) => row.init());
   }
 
   #isLeaf = (columnDefinition: ColumnDefinition<TData>) => !columnDefinition.children.length;
 
   #getLeafNodeCount(): number {
-    return this.#grid
+    return this.grid
       .getColumnDefinitions()
       .reduce((count, current) => count + this.#getColSpan(current), 0);
   }
 
-  #listenToRowRectChange() {
-    this.#disposes.push(
-      effect(() => {
-        this.#calculatePrefixWidthSum();
-        this.#calculatePrefixHeightSum();
-        this.#calculateCellPosition();
-      }),
-    );
-  }
-
   #calculatePrefixHeightSum() {
     let sofar = 0;
-    for (let i = 0; i < this.#rows.length; i++) {
-      const row = this.#rows[i];
-      this.#prefixHeightSum[i] = sofar;
+    for (let i = 0; i < this.rows.length; i++) {
+      const row = this.rows[i];
+      this.prefixHeightSum[i] = sofar;
       sofar += row.getRect().height;
     }
   }
@@ -144,23 +135,23 @@ export class Header<TData extends RowData = RowData>
   };
 
   #calculatePrefixWidthSum() {
-    const lastRow = this.#rows.at(-1);
+    const lastRow = this.rows.at(-1);
     if (!lastRow) return;
 
     let sofar = 0;
     for (let i = 0; i < lastRow.getCells().length; i++) {
       const cell = lastRow.getCells()[i];
-      this.#prefixWidthSum[i] = sofar;
+      this.prefixWidthSum[i] = sofar;
       sofar += cell.rect.width;
     }
   }
 
   #calculateCellPosition = () => {
     batch(() => {
-      this.#rows.forEach((row, rowIndex) => {
+      this.rows.forEach((row, rowIndex) => {
         row.getCells().forEach((cell) => {
-          cell.rect.left = this.#prefixWidthSum[cell.colIndex];
-          cell.rect.top = this.#prefixHeightSum[rowIndex - (cell.rowSpan - 1)];
+          cell.rect.left = this.prefixWidthSum[cell.colIndex];
+          cell.rect.top = this.prefixHeightSum[rowIndex - (cell.rowSpan - 1)];
         });
       });
     });
@@ -174,24 +165,24 @@ export class Header<TData extends RowData = RowData>
         1,
       );
     };
-    return this.#grid.getColumnDefinitions().reduce((max, def) => Math.max(max, dfs(def)), 0);
+    return this.grid.getColumnDefinitions().reduce((max, def) => Math.max(max, dfs(def)), 0);
   }
 
   #createRows() {
-    const rowCount = this.#maxDepth;
-    const columnCount = this.#leafNodeCount;
+    const rowCount = this.maxDepth;
+    const columnCount = this.leafNodeCount;
 
-    this.#rows = Array.from({ length: rowCount });
-    this.#prefixWidthSum = Array.from({ length: columnCount });
+    this.rows = Array.from({ length: rowCount });
+    this.prefixWidthSum = Array.from({ length: columnCount });
 
     for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
       const row = new HeaderRow<TData>({
         rowIndex,
-        grid: this.#grid,
-        nodeCount: this.#leafNodeCount,
+        grid: this.grid,
+        nodeCount: this.leafNodeCount,
       });
-      this.#rows[rowIndex] = row;
-      this.#rowsMap.set(row.getRowId(), row);
+      this.rows[rowIndex] = row;
+      this.rowsMap.set(row.getRowId(), row);
     }
   }
 
@@ -205,14 +196,14 @@ export class Header<TData extends RowData = RowData>
       columnDefinitions.forEach((columnDefinition) => {
         const isLeaf = this.#isLeaf(columnDefinition);
         const colSpan = this.#getColSpan(columnDefinition);
-        const rowSpan = isLeaf ? this.#maxDepth - currentLevel : 1;
-        const rowIndex = isLeaf ? this.#maxDepth - 1 : currentLevel; // Insert leaf node at the last row
-        this.#rows.at(rowIndex)?.insertCell(
+        const rowSpan = isLeaf ? this.maxDepth - currentLevel : 1;
+        const rowIndex = isLeaf ? this.maxDepth - 1 : currentLevel; // Insert leaf node at the last row
+        this.rows.at(rowIndex)?.insertCell(
           new Cell<TData>({
             colSpan,
             rowSpan,
             rowIndex,
-            grid: this.#grid,
+            grid: this.grid,
             colIndex: leafColOffset,
             renderer: () => columnDefinition.title,
           }),
@@ -226,6 +217,6 @@ export class Header<TData extends RowData = RowData>
       });
     };
 
-    _insert(this.#grid.getColumnDefinitions(), 0, 0);
+    _insert(this.grid.getColumnDefinitions(), 0, 0);
   }
 }

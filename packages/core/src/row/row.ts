@@ -1,6 +1,5 @@
-import { batch } from 'valtio-reactive';
 import { Cell } from '../cell/cell';
-import { BaseGridComponent } from '../common';
+import { BaseGridComponent, RenderResult } from '../common';
 import { Grid } from '../grid/grid';
 import { RowData } from '../types';
 import { generateId } from '../utils/generate-id';
@@ -37,16 +36,12 @@ export abstract class Row<TData extends RowData = RowData>
     return this.rowId;
   };
 
-  destroy = (): void => {
-    this.state.cleanup();
-  };
-
-  render = (): HTMLDivElement => {
-    return this.dom;
-  };
-
   getCells = (): Cell<TData>[] => {
     return this.cells;
+  };
+
+  destroy = (): void => {
+    this.disposes.forEach((dispose) => dispose());
   };
 
   getCellById = (cellId: string): Cell<TData> | undefined => {
@@ -55,7 +50,6 @@ export abstract class Row<TData extends RowData = RowData>
 
   init = (): void => {
     this.cells.forEach((cell) => cell.init());
-
     this.state.set('init', true);
   };
 
@@ -64,13 +58,14 @@ export abstract class Row<TData extends RowData = RowData>
     this.cellMaps.set(cell.id, cell);
   };
 
-  measure = () => {
-    batch(() => {
-      this.rect.width = this.cells.reduce((sum, cell) => sum + cell.rect.width, 0);
-      this.rect.height = this.cells.reduce(
-        (height, cell) => Math.min(height, cell.rect.height),
-        Infinity,
-      );
-    });
-  };
+  render = (): RenderResult[] => [
+    {
+      children: [],
+      attributes: {
+        role: 'row',
+        className: '',
+        'data-slot': 'row',
+      },
+    },
+  ];
 }
