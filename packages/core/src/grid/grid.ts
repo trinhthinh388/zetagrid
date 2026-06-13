@@ -15,6 +15,7 @@ export class Grid<TData extends RowData = RowData>
   extends BaseGridComponent<GridState>
   implements IGrid<TData>
 {
+  private data: TData[];
   private header: Header<TData>;
   private plugins: Map<string, BaseGridPlugin<TData>>;
   private columnDefinitions: ColumnDefinition<TData>[];
@@ -68,12 +69,13 @@ export class Grid<TData extends RowData = RowData>
     return plugin as unknown as InstanceType<TPlugin>;
   };
 
-  constructor({ columnDefinitions }: GridConstructorParams<TData>) {
+  constructor({ data, columnDefinitions }: GridConstructorParams<TData>) {
     super();
     this.plugins = new Map();
     this.header = new Header<TData>({
       grid: this,
     });
     this.columnDefinitions = columnDefinitions;
+    this.data = data;
   }
 }

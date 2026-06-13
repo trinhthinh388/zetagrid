@@ -17,6 +17,22 @@ export abstract class BaseGridComponent<TState extends object> {
   protected rect: Reactivity<ComputedRect>;
   protected state: Reactivity<BaseGridComponentState<TState>>;
 
+  measure = (): ComputedRect => this.rect.get();
+
+  getDOM = (): HTMLDivElement => {
+    return this.dom;
+  };
+  getRect = (): ComputedRect => {
+    return this.rect.get();
+  };
+  getState = (): BaseGridComponentState<TState> => {
+    return this.state.get();
+  };
+
+  useEffect = (callback: VoidFunction): void => {
+    this.disposes.push(effect(callback));
+  };
+
   constructor({ initial = {} }: { initial?: Partial<BaseGridComponentState<TState>> } = {}) {
     this.rect = new Reactivity<ComputedRect>({
       x: 0,
@@ -35,24 +51,8 @@ export abstract class BaseGridComponent<TState extends object> {
   }
 
   abstract init(): void;
+
   abstract destroy(): void;
+
   abstract render(): RenderResult[];
-
-  measure = (): ComputedRect => this.rect.getAll();
-
-  getDOM = (): HTMLDivElement => {
-    return this.dom;
-  };
-
-  getRect = (): ComputedRect => {
-    return this.rect.getAll();
-  };
-
-  getState = (): BaseGridComponentState<TState> => {
-    return this.state.getAll();
-  };
-
-  useEffect = (callback: VoidFunction): void => {
-    this.disposes.push(effect(callback));
-  };
 }

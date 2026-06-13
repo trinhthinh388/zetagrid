@@ -5,19 +5,17 @@ type SetOverload<T> = {
   <K extends keyof T>(key: K, value: T[K]): void;
 };
 
+type GetOverload<T> = {
+  (): T;
+  <K extends keyof T>(key: K): T[K];
+};
+
 export class Reactivity<T extends object> {
   #state: T;
 
-  constructor(initial: T) {
-    this.#state = proxy(initial);
-  }
-
-  getAll = () => {
-    return this.#state;
-  };
-
-  get = <K extends keyof T>(key: K): T[K] => {
-    return this.#state[key];
+  get: GetOverload<T> = <K extends keyof T>(...args: unknown[]) => {
+    if (!args[0]) return this.#state;
+    return this.#state[args[0] as K];
   };
 
   set: SetOverload<T> = (...args: unknown[]) => {
@@ -32,4 +30,8 @@ export class Reactivity<T extends object> {
       };
     }
   };
+
+  constructor(initial: T) {
+    this.#state = proxy(initial);
+  }
 }

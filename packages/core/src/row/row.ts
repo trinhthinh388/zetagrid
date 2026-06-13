@@ -22,16 +22,6 @@ export abstract class Row<TData extends RowData = RowData>
   protected cells: Cell<TData>[];
   protected cellMaps: Map<string, Cell<TData>>;
 
-  constructor({ grid, rowIndex }: RowContructorParams<TData>) {
-    super();
-    this.cells = [];
-    this.grid = grid;
-    this.type = 'body';
-    this.rowIndex = rowIndex;
-    this.cellMaps = new Map();
-    this.rowId = `row:${generateId()}`;
-  }
-
   getRowId = (): string => {
     return this.rowId;
   };
@@ -86,6 +76,16 @@ export abstract class Row<TData extends RowData = RowData>
       'width',
       this.cells.reduce((width, cell) => width + cell.getRect().width, 0),
     );
-    return this.rect.getAll();
+    return this.rect.get();
   };
+
+  constructor({ grid, rowIndex }: RowContructorParams<TData>) {
+    super();
+    this.cells = [];
+    this.grid = grid;
+    this.type = 'body';
+    this.rowIndex = rowIndex;
+    this.cellMaps = new Map();
+    this.rowId = `row:${generateId()}`;
+  }
 }
