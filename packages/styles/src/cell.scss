@@ -5,14 +5,13 @@
     display: flex;
     position: absolute;
     align-items: center;
-    white-space: nowrap;
+
+    border-bottom: 1px solid $border;
 
     padding-inline: $spacing-2;
 
     color: $foreground;
     font-weight: 500;
-
-    
-    border-bottom: 1px solid $border;
+    white-space: nowrap;
   }
 }

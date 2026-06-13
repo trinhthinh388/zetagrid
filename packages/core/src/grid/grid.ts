@@ -19,15 +19,6 @@ export class Grid<TData extends RowData = RowData>
   private plugins: Map<string, BaseGridPlugin<TData>>;
   private columnDefinitions: ColumnDefinition<TData>[];
 
-  constructor({ columnDefinitions }: GridConstructorParams<TData>) {
-    super();
-    this.plugins = new Map();
-    this.header = new Header<TData>({
-      grid: this,
-    });
-    this.columnDefinitions = columnDefinitions;
-  }
-
   getHeader = (): Header<TData> => {
     return this.header;
   };
@@ -76,4 +67,13 @@ export class Grid<TData extends RowData = RowData>
     if (!plugin) throw new Error(`Plugin ${PluginClass.name} is not registered`);
     return plugin as unknown as InstanceType<TPlugin>;
   };
+
+  constructor({ columnDefinitions }: GridConstructorParams<TData>) {
+    super();
+    this.plugins = new Map();
+    this.header = new Header<TData>({
+      grid: this,
+    });
+    this.columnDefinitions = columnDefinitions;
+  }
 }
