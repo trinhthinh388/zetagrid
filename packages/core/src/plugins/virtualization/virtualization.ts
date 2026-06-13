@@ -4,6 +4,43 @@ import { RowData } from '../../types';
 import { BaseGridPlugin } from '../base';
 
 export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseGridPlugin<TData> {
+  #scrollHandler: (() => void) | null = null;
+
+  #scrollContainer: HTMLElement | null = null;
+
+  /**
+   * Find the index of the first element >= value.
+   */
+  #lowerBound = (arr: number[], value: number): number => {
+    let lo = 0;
+    let hi = arr.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      if (arr[mid] < value) {
+        lo = mid + 1;
+      } else {
+        hi = mid;
+      }
+    }
+    return lo;
+  };
+  /**
+   * Find the index of the first element > value.
+   */
+  #upperBound = (arr: number[], value: number): number => {
+    let lo = 0;
+    let hi = arr.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      if (arr[mid] <= value) {
+        lo = mid + 1;
+      } else {
+        hi = mid;
+      }
+    }
+    return lo;
+  };
+
   /**
    * Number of extra rows/columns to render outside the visible viewport
    * to avoid flicker during scrolling.
@@ -15,9 +52,6 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
    * (e.g. React components using `useSnapshot`) re-render on scroll.
    */
   scroll = proxy({ top: 0, left: 0 });
-
-  #scrollHandler: (() => void) | null = null;
-  #scrollContainer: HTMLElement | null = null;
 
   /**
    * Called by the grid during destruction.
@@ -39,6 +73,10 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
     // with the scrollable DOM element.
   };
 
+  // ---------------------------------------------------------------------------
+  // Visibility checks
+  // ---------------------------------------------------------------------------
+
   /**
    * Detach the scroll listener and release the container reference.
    */
@@ -49,6 +87,10 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
     this.#scrollContainer = null;
     this.#scrollHandler = null;
   };
+
+  // ---------------------------------------------------------------------------
+  // Range-based queries (use binary search on sorted prefix sums)
+  // ---------------------------------------------------------------------------
 
   /**
    * Register the scrollable container element. This attaches a passive
@@ -68,10 +110,6 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
 
     scrollContainer.addEventListener('scroll', this.#scrollHandler, { passive: true });
   };
-
-  // ---------------------------------------------------------------------------
-  // Visibility checks
-  // ---------------------------------------------------------------------------
 
   /**
    * Returns the [startRow, endRow) range of visible header rows
@@ -94,7 +132,7 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
   };
 
   // ---------------------------------------------------------------------------
-  // Range-based queries (use binary search on sorted prefix sums)
+  // Binary search helpers (on sorted prefix-sum arrays)
   // ---------------------------------------------------------------------------
 
   /**
@@ -140,43 +178,5 @@ export class VirtualizationPlugin<TData extends RowData = RowData> extends BaseG
       left + width > viewportLeft - overscanX && left < viewportLeft + viewportWidth + overscanX;
 
     return visibleVertically && visibleHorizontally;
-  };
-
-  // ---------------------------------------------------------------------------
-  // Binary search helpers (on sorted prefix-sum arrays)
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Find the index of the first element >= value.
-   */
-  #lowerBound = (arr: number[], value: number): number => {
-    let lo = 0;
-    let hi = arr.length;
-    while (lo < hi) {
-      const mid = (lo + hi) >>> 1;
-      if (arr[mid] < value) {
-        lo = mid + 1;
-      } else {
-        hi = mid;
-      }
-    }
-    return lo;
-  };
-
-  /**
-   * Find the index of the first element > value.
-   */
-  #upperBound = (arr: number[], value: number): number => {
-    let lo = 0;
-    let hi = arr.length;
-    while (lo < hi) {
-      const mid = (lo + hi) >>> 1;
-      if (arr[mid] <= value) {
-        lo = mid + 1;
-      } else {
-        hi = mid;
-      }
-    }
-    return lo;
   };
 }
