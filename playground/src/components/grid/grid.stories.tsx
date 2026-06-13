@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Grid } from './grid';
 
 const meta = {
-  title: 'ZetaGrid',
   component: Grid,
+  title: 'ZetaGrid',
 } satisfies Meta<typeof Grid>;
 
 export default meta;
