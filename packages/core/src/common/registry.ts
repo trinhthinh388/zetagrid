@@ -1,3 +1,4 @@
+import { IGrid } from '../grid/types';
 import { RowData } from '../types';
 
 /**
@@ -21,7 +22,7 @@ class GridRegistry {
     return GridRegistry.instance;
   };
 
-  private _grids: Map<string, Registrable>;
+  private _grids: Map<string, IGrid>;
 
   private constructor() {
     this._grids = new Map();
@@ -51,14 +52,14 @@ class GridRegistry {
   /**
    * Retrieve a grid by its ID.
    */
-  get<TData extends RowData>(id: string): Registrable | undefined {
-    return this._grids.get(id);
+  get<TData extends RowData>(id: string): IGrid<TData> | undefined {
+    return this._grids.get(id) as IGrid<TData> | undefined;
   }
 
   /**
    * Register a registrable instance under its ID.
    */
-  set(grid: Registrable): void {
+  set(grid: IGrid): void {
     const id = grid.getId();
     if (this._grids.has(id)) {
       throw new Error(`Grid with ID "${id}" is already registered.`);

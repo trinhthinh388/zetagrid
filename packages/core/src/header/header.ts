@@ -1,22 +1,21 @@
 import { batch } from 'valtio-reactive';
 import { Cell } from '../cell/cell';
-import { BaseGridComponent, RenderResult } from '../common';
-import { Grid } from '../grid/grid';
+import { RenderResult } from '../common';
+import { GridChildComponent } from '../common/grid-child-component';
 import { HeaderRow } from '../row/header-row';
 import { ColumnDefinition, RowData } from '../types';
 import { HeaderState, IHeader } from './types';
 
 export type HeaderContructorParams<TData extends RowData = RowData> = {
-  grid: Grid<TData>;
+  gridId: string;
 };
 
 export class Header<TData extends RowData = RowData>
-  extends BaseGridComponent<HeaderState>
+  extends GridChildComponent<HeaderState, TData>
   implements IHeader<TData>
 {
   private maxDepth = 0;
   private leafNodeCount = 0;
-  private grid: Grid<TData>;
   private rows: HeaderRow<TData>[];
   /**
    * Pre-calculated prefixSum of cells' width
@@ -126,10 +125,9 @@ export class Header<TData extends RowData = RowData>
     this.state.set('init', true);
   };
 
-  constructor({ grid }: HeaderContructorParams<TData>) {
-    super();
+  constructor({ gridId }: HeaderContructorParams<TData>) {
+    super({ gridId });
     this.rows = [];
-    this.grid = grid;
     this.disposes = [];
     this.rowsMap = new Map();
     this.prefixWidthSum = [];
@@ -188,7 +186,7 @@ export class Header<TData extends RowData = RowData>
     for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
       const row = new HeaderRow<TData>({
         rowIndex,
-        grid: this.grid,
+        gridId: this.gridId,
         nodeCount: this.leafNodeCount,
       });
       this.rows[rowIndex] = row;
@@ -213,7 +211,7 @@ export class Header<TData extends RowData = RowData>
             colSpan,
             rowSpan,
             rowIndex,
-            grid: this.grid,
+            gridId: this.gridId,
             colIndex: leafColOffset,
             renderer: () => columnDefinition.title,
           }),

@@ -1,20 +1,19 @@
 import { Cell } from '../cell/cell';
-import { BaseGridComponent, RenderResult } from '../common';
-import { Grid } from '../grid/grid';
+import { RenderResult } from '../common';
+import { GridChildComponent } from '../common/grid-child-component';
 import { BodyRow } from '../row/body-row';
 import { ColumnDefinition, RowData } from '../types';
 import { BodyState, IBody } from './types';
 
 export type BodyContructorParams<TData extends RowData = RowData> = {
-  grid: Grid<TData>;
+  gridId: string;
 };
 
 export class Body<TData extends RowData = RowData>
-  extends BaseGridComponent<BodyState>
+  extends GridChildComponent<BodyState, TData>
   implements IBody<TData>
 {
   private totalRows = 0;
-  private grid: Grid<TData>;
   private rows: BodyRow<TData>[];
   private rowsMap: Map<string, BodyRow<TData>>;
 
@@ -57,10 +56,9 @@ export class Body<TData extends RowData = RowData>
     },
   ];
 
-  constructor({ grid }: BodyContructorParams<TData>) {
-    super();
+  constructor({ gridId }: BodyContructorParams<TData>) {
+    super({ gridId });
     this.rows = [];
-    this.grid = grid;
     this.totalRows = 0;
     this.rowsMap = new Map();
   }
@@ -75,7 +73,7 @@ export class Body<TData extends RowData = RowData>
       const row = new BodyRow<TData>({
         rowIndex,
         nodeCount,
-        grid: this.grid,
+        gridId: this.gridId,
       });
       this.rows[rowIndex] = row;
       this.rowsMap.set(row.getRowId(), row);
@@ -99,7 +97,7 @@ export class Body<TData extends RowData = RowData>
             colSpan,
             rowSpan,
             rowIndex,
-            grid: this.grid,
+            gridId: this.gridId,
             colIndex: leafColOffset,
             renderer: () => columnDefinition.title,
           }),

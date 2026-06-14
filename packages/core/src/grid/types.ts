@@ -2,7 +2,7 @@ import { Body } from '../body/body';
 import { Cell } from '../cell/cell';
 import { Header } from '../header/header';
 import { BaseGridPlugin } from '../plugins/base';
-import { ColumnDefinition, RowData } from '../types';
+import { ColumnDefinition, ComputedRect, RowData } from '../types';
 
 export interface IGrid<TData extends RowData = RowData> {
   /**
@@ -17,6 +17,10 @@ export interface IGrid<TData extends RowData = RowData> {
    * Get the Grid's Body instance
    */
   getBody: () => Body<TData>;
+  /**
+   * Returns the computed rect of the grid DOM element.
+   */
+  getRect: () => ComputedRect;
   /**
    * Get the Grid's Header instance
    */

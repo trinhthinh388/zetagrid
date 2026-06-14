@@ -1,20 +1,20 @@
-import { BaseGridComponent, RenderResult } from '../common';
-import { Grid } from '../grid/grid';
+import { RenderResult } from '../common';
+import { GridChildComponent } from '../common/grid-child-component';
 import { RowData } from '../types';
 import { generateId } from '../utils';
 import { CellRenderer, CellState, ICell } from './types';
 
 export type CellContructorParams<TData extends RowData = RowData> = {
+  gridId: string;
   rowSpan: number;
   colSpan: number;
   rowIndex: number;
   colIndex: number;
-  grid: Grid<TData>;
   renderer: CellRenderer<TData>;
 };
 
 export class Cell<TData extends RowData = RowData>
-  extends BaseGridComponent<CellState<TData>>
+  extends GridChildComponent<CellState<TData>, TData>
   implements ICell<TData>
 {
   static DEFAULT_CELL_HEIGHT = 40;
@@ -26,7 +26,6 @@ export class Cell<TData extends RowData = RowData>
   private colIndex: number;
   private rowIndex: number;
 
-  private grid: Grid<TData>;
   private renderer: CellRenderer<TData>;
 
   getId = (): string => this.id;
@@ -84,16 +83,15 @@ export class Cell<TData extends RowData = RowData>
   ];
 
   constructor({
-    grid,
+    gridId,
     rowSpan,
     colSpan,
     rowIndex,
     colIndex,
     renderer,
   }: CellContructorParams<TData>) {
-    super();
+    super({ gridId });
     this.id = `cell-${generateId()}`;
-    this.grid = grid;
     this.colSpan = colSpan;
     this.rowSpan = rowSpan;
     this.colIndex = colIndex;

@@ -80,7 +80,7 @@ export class Grid<TData extends RowData = RowData>
 
   register = (...PluginClasses: (typeof BaseGridPlugin<TData>)[]): void => {
     PluginClasses.forEach((PluginClass) => {
-      const plugin = new PluginClass({ grid: this });
+      const plugin = new PluginClass({ gridId: this.id });
       this.plugins.set(PluginClass.name, plugin);
       plugin.init();
     });
@@ -98,9 +98,9 @@ export class Grid<TData extends RowData = RowData>
     super();
     this.plugins = new Map();
     this.header = new Header<TData>({
-      grid: this,
+      gridId: this.id,
     });
-    this.body = new Body<TData>({ grid: this });
+    this.body = new Body<TData>({ gridId: this.id });
     this.columnDefinitions = columnDefinitions;
     this.data = data;
   }
