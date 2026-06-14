@@ -5,6 +5,7 @@ import { useWatch } from '../hooks/use-watch';
 import { GridProvider } from './grid-context';
 
 import '@styles';
+import { Body } from '../body';
 import { Renderer } from '../common/renderer';
 import { Header } from '../header';
 
@@ -35,7 +36,14 @@ export const Grid = <TData extends RowData = RowData>({
 
   return (
     <GridProvider grid={grid}>
-      <Renderer render={grid.render()}>{!!init && <Header />}</Renderer>
+      <Renderer render={grid.render()}>
+        {!!init && (
+          <>
+            <Header />
+            <Body />
+          </>
+        )}
+      </Renderer>
     </GridProvider>
   );
 };

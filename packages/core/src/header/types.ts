@@ -3,6 +3,7 @@ import { HeaderRow } from '../row/header-row';
 import { RowData } from '../types';
 
 export interface IHeader<TData extends RowData = RowData> {
+  getLeafNodeCount: () => number;
   getPrefixWidthSum: () => number[];
   getPrefixHeightSum: () => number[];
   getHeaderRows: () => HeaderRow<TData>[];

@@ -29,15 +29,25 @@ export class Header<TData extends RowData = RowData>
   private prefixHeightSum: number[];
   private rowsMap: Map<string, HeaderRow<TData>>;
 
-  constructor({ grid }: HeaderContructorParams<TData>) {
-    super();
-    this.rows = [];
-    this.grid = grid;
-    this.disposes = [];
-    this.rowsMap = new Map();
-    this.prefixWidthSum = [];
-    this.prefixHeightSum = [];
-  }
+  #isLeaf = (columnDefinition: ColumnDefinition<TData>) => !columnDefinition.children.length;
+
+  #getColSpan = (columnDefinition: ColumnDefinition<TData>): number => {
+    if (!columnDefinition.children.length) return 1;
+    return columnDefinition.children.reduce((acc, child) => acc + this.#getColSpan(child), 0);
+  };
+
+  #calculateCellPosition = () => {
+    batch(() => {
+      this.rows.forEach((row, rowIndex) => {
+        row.getCells().forEach((cell) => {
+          cell.getRect().left = this.prefixWidthSum[cell.getColIndex()];
+          cell.getRect().top = this.prefixHeightSum[rowIndex - (cell.getRowSpan() - 1)];
+        });
+      });
+    });
+  };
+
+  getLeafNodeCount = (): number => this.leafNodeCount;
 
   getPrefixWidthSum = (): number[] => this.prefixWidthSum;
 
@@ -45,6 +55,10 @@ export class Header<TData extends RowData = RowData>
 
   getHeaderRows = (): HeaderRow<TData>[] => {
     return this.rows;
+  };
+
+  override refresh = (): void => {
+    this.rows.forEach((row) => row.refresh());
   };
 
   destroy = (): void => {
@@ -71,8 +85,8 @@ export class Header<TData extends RowData = RowData>
   render = (): RenderResult[] => [
     {
       attributes: {
-        role: 'header',
-        'data-slot': 'presentation',
+        role: 'presentation',
+        'data-slot': 'header',
         className: 'zeta-grid__header',
       },
       children: [
@@ -112,11 +126,19 @@ export class Header<TData extends RowData = RowData>
     this.state.set('init', true);
   };
 
+  constructor({ grid }: HeaderContructorParams<TData>) {
+    super();
+    this.rows = [];
+    this.grid = grid;
+    this.disposes = [];
+    this.rowsMap = new Map();
+    this.prefixWidthSum = [];
+    this.prefixHeightSum = [];
+  }
+
   #initRows() {
     this.rows.forEach((row) => row.init());
   }
-
-  #isLeaf = (columnDefinition: ColumnDefinition<TData>) => !columnDefinition.children.length;
 
   #getLeafNodeCount(): number {
     return this.grid
@@ -133,11 +155,6 @@ export class Header<TData extends RowData = RowData>
     }
   }
 
-  #getColSpan = (columnDefinition: ColumnDefinition<TData>): number => {
-    if (!columnDefinition.children.length) return 1;
-    return columnDefinition.children.reduce((acc, child) => acc + this.#getColSpan(child), 0);
-  };
-
   #calculatePrefixWidthSum() {
     const lastRow = this.rows.at(-1);
     if (!lastRow) return;
@@ -149,17 +166,6 @@ export class Header<TData extends RowData = RowData>
       sofar += cell.getRect().width;
     }
   }
-
-  #calculateCellPosition = () => {
-    batch(() => {
-      this.rows.forEach((row, rowIndex) => {
-        row.getCells().forEach((cell) => {
-          cell.getRect().left = this.prefixWidthSum[cell.getColIndex()];
-          cell.getRect().top = this.prefixHeightSum[rowIndex - (cell.getRowSpan() - 1)];
-        });
-      });
-    });
-  };
 
   #getMaxColumnDefinitionDepth(): number {
     const dfs = (columnDefinition?: ColumnDefinition<TData>): number => {

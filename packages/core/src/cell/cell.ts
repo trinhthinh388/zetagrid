@@ -29,24 +29,6 @@ export class Cell<TData extends RowData = RowData>
   private grid: Grid<TData>;
   private renderer: CellRenderer<TData>;
 
-  constructor({
-    grid,
-    rowSpan,
-    colSpan,
-    rowIndex,
-    colIndex,
-    renderer,
-  }: CellContructorParams<TData>) {
-    super();
-    this.id = `cell-${generateId()}`;
-    this.grid = grid;
-    this.colSpan = colSpan;
-    this.rowSpan = rowSpan;
-    this.colIndex = colIndex;
-    this.rowIndex = rowIndex;
-    this.renderer = renderer;
-  }
-
   getId = (): string => this.id;
 
   getColSpan = (): number => this.colSpan;
@@ -58,6 +40,10 @@ export class Cell<TData extends RowData = RowData>
   getColIndex = (): number => this.colIndex;
 
   renderCell = <T = unknown>(): T => this.renderer();
+
+  override refresh = (): void => {
+    console.log('refresh cell');
+  };
 
   destroy = (): void => {
     this.disposes.forEach((dispose) => dispose());
@@ -96,4 +82,22 @@ export class Cell<TData extends RowData = RowData>
       },
     },
   ];
+
+  constructor({
+    grid,
+    rowSpan,
+    colSpan,
+    rowIndex,
+    colIndex,
+    renderer,
+  }: CellContructorParams<TData>) {
+    super();
+    this.id = `cell-${generateId()}`;
+    this.grid = grid;
+    this.colSpan = colSpan;
+    this.rowSpan = rowSpan;
+    this.colIndex = colIndex;
+    this.rowIndex = rowIndex;
+    this.renderer = renderer;
+  }
 }

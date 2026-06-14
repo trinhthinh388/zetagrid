@@ -30,6 +30,10 @@ export abstract class Row<TData extends RowData = RowData>
     return this.cells;
   };
 
+  override refresh = (): void => {
+    this.cells.forEach((cell) => cell.refresh());
+  };
+
   getCellById = (cellId: string): Cell<TData> | undefined => {
     return this.cellMaps.get(cellId);
   };

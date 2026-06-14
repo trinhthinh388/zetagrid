@@ -7,5 +7,5 @@ let idCounter = 0;
  * @returns A unique identifier string in the format `:r{number}:`.
  */
 export const generateId = (): string => {
-  return `:r${idCounter++}:`;
+  return `_zg${idCounter++}`;
 };

@@ -1,9 +1,25 @@
+import { Body } from '../body/body';
 import { Cell } from '../cell/cell';
 import { Header } from '../header/header';
 import { BaseGridPlugin } from '../plugins/base';
 import { ColumnDefinition, RowData } from '../types';
 
 export interface IGrid<TData extends RowData = RowData> {
+  /**
+   * Returns the ID of the grid.
+   */
+  getId: () => string;
+  /**
+   * Returns the current data of the Grid
+   */
+  getData: () => TData[];
+  /**
+   * Get the Grid's Body instance
+   */
+  getBody: () => Body<TData>;
+  /**
+   * Get the Grid's Header instance
+   */
   getHeader: () => Header<TData>;
   getCellById: (cellId: string) => Cell<TData>;
   getColumnDefinitions: () => ColumnDefinition<TData>[];

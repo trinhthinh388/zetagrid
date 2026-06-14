@@ -52,6 +52,8 @@ export abstract class BaseGridComponent<TState extends object> {
 
   abstract init(): void;
 
+  abstract refresh(): void;
+
   abstract destroy(): void;
 
   abstract render(): RenderResult[];
