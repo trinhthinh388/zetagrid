@@ -1,7 +1,6 @@
 import { Body } from '../body/body';
 import { Cell } from '../cell/cell';
-import { BaseGridComponent, RenderResult } from '../common';
-import { register } from '../common/annotations/register';
+import { BaseGridComponent, grid, RenderResult } from '../common';
 import { gridRegistry } from '../common/registry';
 import { Header } from '../header/header';
 import { BaseGridPlugin } from '../plugins/base';
@@ -15,7 +14,7 @@ export type GridConstructorParams<TData extends RowData = RowData> = {
   columnDefinitions: ColumnDefinition<TData>[];
 };
 
-@register
+@grid
 export class Grid<TData extends RowData = RowData>
   extends BaseGridComponent<GridState>
   implements IGrid<TData>

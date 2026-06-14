@@ -22,15 +22,22 @@ export abstract class BaseGridComponent<TState extends object> {
   getDOM = (): HTMLDivElement => {
     return this.dom;
   };
+
   getRect = (): ComputedRect => {
     return this.rect.get();
   };
+
   getState = (): BaseGridComponentState<TState> => {
     return this.state.get();
   };
 
   useEffect = (callback: VoidFunction): void => {
     this.disposes.push(effect(callback));
+  };
+
+  ref = (element: HTMLDivElement | null): void => {
+    if (!element) return;
+    this.dom = element;
   };
 
   constructor({ initial = {} }: { initial?: Partial<BaseGridComponentState<TState>> } = {}) {

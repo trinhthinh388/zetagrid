@@ -10,13 +10,13 @@ import { gridRegistry } from '../registry';
  *
  * @example
  * ```ts
- * @register
+ * @grid
  * export class Grid<TData extends RowData = RowData>
  *   extends BaseGridComponent<GridState>
  *   implements IGrid<TData> { … }
  * ```
  */
-export function register<TClass extends new (...args: any[]) => IGrid>(Base: TClass): TClass {
+export function grid<TClass extends new (...args: any[]) => IGrid>(Base: TClass): TClass {
   return class extends Base {
     constructor(...args: any[]) {
       super(...args);
